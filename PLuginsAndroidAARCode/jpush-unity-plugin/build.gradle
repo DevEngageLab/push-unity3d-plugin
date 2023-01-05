@@ -1,0 +1,58 @@
+buildscript {
+    repositories {
+        google()
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
+        maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    provided files('libsprovided/unity-classes.jar')
+//    compile files('libs/jcore-android-2.1.2.jar')
+//    compile files('libs/jpush-android-3.3.4.jar')
+}
+
+repositories {
+    flatDir{
+        dirs 'libs'  //this way we can find the .aar file in libs folder
+    }
+}
