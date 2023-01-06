@@ -1,9 +1,4 @@
-# JPush Unity Plugin
-
-[![release](https://img.shields.io/badge/release-3.2.0-blue.svg)](https://github.com/jpush/jpush-unity3d-plugin/releases)
-[![platforms](https://img.shields.io/badge/platforms-iOS%7CAndroid-green.svg)](https://github.com/jpush/jpush-unity3d-plugin)
-
-这是极光官方支持的 JPush Unity 插件（Android &amp; iOS）。
+# MTPush Unity Plugin
 
 ## 集成
 
@@ -11,10 +6,205 @@
 
 ### Android
 
-1. 替换 AndroidManifest.xml 里的包名。
-2. 将 AndroidManifest.xml 中的 JPUSH_APPKEY 值替换成极光控制台应用详情中的 AppKey 值。
-3. 配置项目里的包名：在 Unity 中选择 *File---Build Settings---Player Settings*，将 *Identification* 选项下的 *Bundle Identifier* 设置为应用的包名。
+1. 生成build文件：
+   在 Unity 中选择 *File---Build Settings---Player Settings*
+   ---Publishing Settings ---- Build 选项下的 Custom Launcher Gradle Template  和 Custom Gradle Properties Template 勾上，
+   会生成launcherTemplate.gradle和gradleTemplate.properties文件。
+#### 修改launcherTemplate.gradle文件：
+- 在最外层添加
+```
+buildscript {
+   repositories {
+      google()
+      mavenCentral()
+      maven { url 'https://developer.huawei.com/repo/' }//华为厂商需要
+      }
+}
+rootProject.allprojects {
+      repositories {
+         google()
+         mavenCentral()
+         maven { url 'https://developer.huawei.com/repo/' }//华为厂商需要
+         }
+}
+```
+- 在dependencies添加
+```javascript
+dependencies {
+    //必选
+   implementation 'com.engagelab:engagelab:3.0.0.release'
+   //以下厂商可选
+   //google 厂商
+   implementation 'com.engagelab.plugin:google:3.0.0.release'
+   implementation 'com.google.firebase:firebase-messaging:23.0.8'
+   //huawei 厂商
+   implementation 'com.engagelab.plugin:huawei:3.0.0.release'
+   implementation 'com.huawei.hms:push:6.5.0.300'
+   //小米海外 厂商
+   implementation 'com.engagelab.plugin:mi_global:3.0.0.release'
+   //meizu 厂商
+   implementation 'com.engagelab.plugin:meizu:3.0.0.release'
+   //oppo 厂商
+   implementation 'com.engagelab.plugin:oppo:3.0.0.release'
+   implementation 'com.engagelab.plugin:oppo_msp_push:3.0.0.release'
+   //vivo 厂商
+   implementation 'com.engagelab.plugin:vivo:3.0.0.release'
 
+}
+```
+- 在defaultConfig修改
+```
+ applicationId '**APPLICATIONID**'
+ 修改成
+  applicationId '你的包名'
+```
+- 在defaultConfig 添加
+```
+manifestPlaceholders = [
+                ENGAGELAB_PRIVATES_APPKEY : "你的appkey",
+                ENGAGELAB_PRIVATES_CHANNEL: "developer",
+                ENGAGELAB_PRIVATES_PROCESS: ":remote",
+                //以下厂商可选
+                //小米海外厂商信息
+                XIAOMI_GLOBAL_APPID            : "",
+                XIAOMI_GLOBAL_APPKEY           : "",
+                //MEIZU厂商信息
+                MEIZU_APPID            : "",
+                MEIZU_APPKEY           : "",
+                //OPPO厂商信息
+                OPPO_APPID             : "",
+                OPPO_APPKEY            : "",
+                OPPO_APPSECRET         : "",
+                //VIVO厂商信息
+                VIVO_APPID             : "",
+                VIVO_APPKEY            : ""
+        ]
+```
+- 最后例子：
+```
+apply plugin: 'com.android.application'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }//华为厂商需要
+
+    }
+}
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }//华为厂商需要
+    }
+}
+
+dependencies {
+    implementation project(':unityLibrary')
+
+    implementation 'com.engagelab:engagelab:3.0.0.release'
+    //以下厂商可选
+    //google 厂商
+    implementation 'com.engagelab.plugin:google:3.0.0.release'
+    implementation 'com.google.firebase:firebase-messaging:23.0.8'
+    //huawei 厂商
+    implementation 'com.engagelab.plugin:huawei:3.0.0.release'
+    implementation 'com.huawei.hms:push:6.5.0.300'
+    //小米海外 厂商
+    implementation 'com.engagelab.plugin:mi_global:3.0.0.release'
+    //meizu 厂商
+    implementation 'com.engagelab.plugin:meizu:3.0.0.release'
+    //oppo 厂商
+    implementation 'com.engagelab.plugin:oppo:3.0.0.release'
+    implementation 'com.engagelab.plugin:oppo_msp_push:3.0.0.release'
+    //vivo 厂商
+    implementation 'com.engagelab.plugin:vivo:3.0.0.release'
+
+    }
+
+android {
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion **MINSDKVERSION**
+        targetSdkVersion **TARGETSDKVERSION**
+        applicationId '**APPLICATIONID**'
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+
+        manifestPlaceholders = [
+                ENGAGELAB_PRIVATES_APPKEY : "你的appkey",
+                ENGAGELAB_PRIVATES_CHANNEL: "developer",
+                ENGAGELAB_PRIVATES_PROCESS: ":remote",
+                //以下厂商可选
+                //小米海外厂商信息
+                XIAOMI_GLOBAL_APPID            : "",
+                XIAOMI_GLOBAL_APPKEY           : "",
+                //MEIZU厂商信息
+                MEIZU_APPID            : "",
+                MEIZU_APPKEY           : "",
+                //OPPO厂商信息
+                OPPO_APPID             : "",
+                OPPO_APPKEY            : "",
+                OPPO_APPSECRET         : "",
+                //VIVO厂商信息
+                VIVO_APPID             : "",
+                VIVO_APPKEY            : ""
+        ]
+    }
+
+    aaptOptions {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**SIGN**
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled **MINIFY_DEBUG**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+            jniDebuggable true
+        }
+        release {
+            minifyEnabled **MINIFY_RELEASE**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+        }
+    }**PACKAGING_OPTIONS****PLAY_ASSET_PACKS****SPLITS**
+**BUILT_APK_LOCATION**
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}**SPLITS_VERSION_CODE****LAUNCHER_SOURCE_BUILD_SETUP**
+
+```
+#### 修改gradleTemplate.properties文件：
+添加以下内容
+```
+//没有用GOOLE厂商的不用加
+android.useAndroidX=true
+```
+   
 ### iOS
 
 1. 生成 iOS 工程，并打开该工程。
