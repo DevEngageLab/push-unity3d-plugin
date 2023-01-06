@@ -8,7 +8,7 @@ using System;
 using LitJson;
 #endif
 
-public class PluginsDemo : MonoBehaviour
+public class MTPluginsDemo : MonoBehaviour
 {
     string str_unity = "";
 	  int callbackId = 0;
