@@ -47,6 +47,7 @@ public class MTPushBridge {
 
 
     public void initMTPush(String gameObject) {
+        logD(TAG, "initMTPush:" + gameObject);
         MTPushBridge.gameObject = gameObject;
         MTPushPrivatesApi.init(getApplicationContext());
     }
@@ -134,6 +135,7 @@ public class MTPushBridge {
      * @return registrationId
      */
     String getRegistrationId() {
+        logD(TAG, "getRegistrationId");
         Context context = getApplicationContext();
         String registrationId = MTCorePrivatesApi.getRegistrationId(context);
         return registrationId;

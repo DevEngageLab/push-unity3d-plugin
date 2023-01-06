@@ -32,7 +32,13 @@ public class MTPluginsDemo : MonoBehaviour
 
     void OnGUI()
     {
-        str_unity = GUILayout.TextField(str_unity, GUILayout.Width(Screen.width - 80),
+        
+         if (GUILayout.Button(" ", GUILayout.Height(80)))
+        {
+            Debug.Log("------>Button: ");
+        }
+
+        str_unity = GUILayout.TextField(str_unity, GUILayout.Width(Screen.width),
         GUILayout.Height(200));
 
 
@@ -40,7 +46,7 @@ public class MTPluginsDemo : MonoBehaviour
         {
             string registrationId = JPushBinding.GetRegistrationId();
             Debug.Log("------>registrationId: " + registrationId);
-            
+            str_unity = "registrationId: "+registrationId;
         }
     }
 
