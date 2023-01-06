@@ -9,7 +9,7 @@ using LitJson;
 #endif
 
 // @version v3.1.0
-namespace JPush
+namespace MTPush
 {
     public class JPushBinding : MonoBehaviour
     {
@@ -17,25 +17,9 @@ namespace JPush
 
         private static AndroidJavaObject _plugin;
 
-        private static int notificationDefaults = -1;
-        private static int notificationFlags = 16;
-
-        private static readonly int DEFAULT_ALL = -1;
-        private static readonly int DEFAULT_SOUND = 1;
-        private static readonly int DEFAULT_VIBRATE = 2;
-        private static readonly int DEFAULT_LIGHTS = 4;
-
-        private static readonly int FLAG_SHOW_LIGHTS = 1;
-        private static readonly int FLAG_ONGOING_EVENT = 2;
-        private static readonly int FLAG_INSISTENT = 4;
-        private static readonly int FLAG_ONLY_ALERT_ONCE = 8;
-        private static readonly int FLAG_AUTO_CANCEL = 16;
-        private static readonly int FLAG_NO_CLEAR = 32;
-        private static readonly int FLAG_FOREGROUND_SERVICE = 64;
-
         static JPushBinding()
         {
-            using (AndroidJavaClass jpushClass = new AndroidJavaClass("cn.jiguang.unity.push.JPushBridge"))
+            using (AndroidJavaClass jpushClass = new AndroidJavaClass("com.engagelab.privates.unity.push.MTPushBridge"))
             {
                 _plugin = jpushClass.CallStatic<AndroidJavaObject>("getInstance");
             }
@@ -47,13 +31,13 @@ namespace JPush
         /// 初始化 JPush。
         /// </summary>
         /// <param name="gameObject">游戏对象名。</param>
-        public static void Init(string gameObject)
+        public static void InitMTPush(string gameObject)
         {
             #if UNITY_ANDROID
-            _plugin.Call("initPush", gameObject);
+            _plugin.Call("initMTPush", gameObject);
 
             #elif UNITY_IOS
-            _initJpush(gameObject);
+            _initMTPush(gameObject);
 
             #endif
         }
@@ -63,13 +47,13 @@ namespace JPush
         /// <para>Debug 模式将会输出更多的日志信息，建议在发布时关闭。</para>
         /// </summary>
         /// <param name="enable">true: 开启；false: 关闭。</param>
-        public static void SetDebug(bool enable)
+        public static void ConfigDebugMode(bool enable)
         {
             #if UNITY_ANDROID
-            _plugin.Call("setDebug", enable);
+            _plugin.Call("configDebugMode", enable);
 
             #elif UNITY_IOS
-            _setDebugJpush(enable);
+            _configDebugMode(enable);
 
             #endif
         }
@@ -84,7 +68,7 @@ namespace JPush
             return _plugin.Call<string>("getRegistrationId");
 
             #elif UNITY_IOS
-            return _getRegistrationIdJpush();
+            return _getRegistrationId();
 
             #else
             return "";
@@ -92,719 +76,289 @@ namespace JPush
             #endif
         }
 
-        /// <summary>
-        /// 为设备设置标签（tag）。
-        /// <para>注意：这个接口是覆盖逻辑，而不是增量逻辑。即新的调用会覆盖之前的设置。</para>
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        /// <param name="tags">
-        ///     标签列表。
-        ///     <para>每次调用至少设置一个 tag，覆盖之前的设置，不是新增。</para>
-        ///     <para>有效的标签组成：字母（区分大小写）、数字、下划线、汉字、特殊字符 @!#$&*+=.|。</para>
-        ///     <para>限制：每个 tag 命名长度限制为 40 字节，最多支持设置 1000 个 tag，且单次操作总长度不得超过 5000 字节（判断长度需采用 UTF-8 编码）。</para>
-        /// </param>
-        public static void SetTags(int sequence, List<string> tags)
-        {
-            string tagsJsonStr = JsonHelper.ToJson<string>(tags);
 
-            #if UNITY_ANDROID
-            _plugin.Call("setTags", sequence, tagsJsonStr);
+  /**
+   * 设置应用角标数量，默认0（仅华为/荣耀/ios生效）
+   *
+   * @param context 不为空
+   * @param badge   应用角标数量
+   */
+  public static void SetNotificationBadge(int badge) {
+   #if UNITY_ANDROID
+            _plugin.Call("setNotificationBadge",badge);
 
             #elif UNITY_IOS
-            _setTagsJpush(sequence, tagsJsonStr);
+            _setNotificationBadge(badge);
+
+            #else
+            
 
             #endif
-        }
+  }
 
-        /// <summary>
-        /// 为设备新增标签（tag）。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        /// <param name="tags">
-        ///     标签列表。
-        ///     <para>每次调用至少设置一个 tag，覆盖之前的设置，不是新增。</para>
-        ///     <para>有效的标签组成：字母（区分大小写）、数字、下划线、汉字、特殊字符 @!#$&*+=.|。</para>
-        ///     <para>限制：每个 tag 命名长度限制为 40 字节，最多支持设置 1000 个 tag，且单次操作总长度不得超过 5000 字节（判断长度需采用 UTF-8 编码）。</para>
-        /// </param>
-        public static void AddTags(int sequence, List<string> tags)
-        {
-            string tagsJsonStr = JsonHelper.ToJson(tags);
-
+  /**
+   * 重置应用角标数量，默认0（仅华为/荣耀生效/ios）
+   *
+   * @param context 不为空
+   */
+  public static void ResetNotificationBadge() {
             #if UNITY_ANDROID
-            _plugin.Call("addTags", sequence, tagsJsonStr);
+             _plugin.Call("resetNotificationBadge");
 
             #elif UNITY_IOS
-            _addTagsJpush(sequence, tagsJsonStr);
+             _resetNotificationBadge();
+
+            #else
 
             #endif
-        }
-
-        /// <summary>
-        /// 删除标签（tag）。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        /// <param name="tags">
-        ///     标签列表。
-        ///     <para>每次调用至少设置一个 tag，覆盖之前的设置，不是新增。</para>
-        ///     <para>有效的标签组成：字母（区分大小写）、数字、下划线、汉字、特殊字符 @!#$&*+=.|。</para>
-        ///     <para>限制：每个 tag 命名长度限制为 40 字节，最多支持设置 1000 个 tag，且单次操作总长度不得超过 5000 字节（判断长度需采用 UTF-8 编码）。</para>
-        /// </param>
-        public static void DeleteTags(int sequence, List<string> tags)
-        {
-            string tagsJsonStr = JsonHelper.ToJson(tags);
-
-            #if UNITY_ANDROID
-            _plugin.Call("deleteTags", sequence, tagsJsonStr);
-
-            #elif UNITY_IOS
-            _deleteTagsJpush(sequence, tagsJsonStr);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 清空当前设备设置的标签（tag）。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        public static void CleanTags(int sequence)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("cleanTags", sequence);
-
-            #elif UNITY_IOS
-            _cleanTagsJpush(sequence);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 获取当前设备设置的所有标签（tag）。
-        /// <para>需要实现 OnJPushTagOperateResult 方法获得操作结果。</para>
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        public static void GetAllTags(int sequence)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("getAllTags", sequence);
-
-            #elif UNITY_IOS
-            _getAllTagsJpush(sequence);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 查询指定标签的绑定状态。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        /// <param name="tag">待查询的标签。</param>
-        public static void CheckTagBindState(int sequence, string tag)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("checkTagBindState", sequence, tag);
-
-            #elif UNITY_IOS
-            _checkTagBindStateJpush(sequence, tag);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 设置别名。
-        /// <para>注意：这个接口是覆盖逻辑，而不是增量逻辑。即新的调用会覆盖之前的设置。</para>
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        /// <param name="alias">
-        ///     别名。
-        ///     <para>有效的别名组成：字母（区分大小写）、数字、下划线、汉字、特殊字符@!#$&*+=.|。</para>
-        ///     <para>限制：alias 命名长度限制为 40 字节（判断长度需采用 UTF-8 编码）。</para>
-        /// </param>
-        public static void SetAlias(int sequence, string alias)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("setAlias", sequence, alias);
-
-            #elif UNITY_IOS
-            _setAliasJpush(sequence, alias);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 删除别名。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        public static void DeleteAlias(int sequence)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("deleteAlias", sequence);
-
-            #elif UNITY_IOS
-            _deleteAliasJpush(sequence);
-
-            #endif
-        }
-
-        /// <summary>
-        /// 获取当前设备设置的别名。
-        /// </summary>
-        /// <param name="sequence">用户自定义的操作序列号。同操作结果一起返回，用来标识一次操作的唯一性。</param>
-        public static void GetAlias(int sequence)
-        {
-            #if UNITY_ANDROID
-            _plugin.Call("getAlias", sequence);
-
-            #elif UNITY_IOS
-            _getAliasJpush(sequence);
-
-            #endif
-        }
+  }
 
 
-        ///接口返回
-        ///有效的 tag 集合。
-        public static List<string> FilterValidTags(List<string> jsonTags)
-        {
-            string tagsJsonStr = JsonHelper.ToJson(jsonTags);
-            string reJson;
 
-            #if UNITY_ANDROID
-            reJson = _plugin.Call<string>("filterValidTags", tagsJsonStr);
-            #elif UNITY_IOS
-            reJson =  _filterValidTagsJpush(tagsJsonStr);
-            #endif
-            if (null == reJson)
-            {
-                return new List<string>();
-            }
-
-            string[] reStringArray = JsonHelper.FromJson<string>(reJson);
-
-            if (null == reStringArray)
-            {
-                return new List<string>();
-            }
-
-            List<string> reList = new List<string>(); ;
-            for (int i = 0; i < reStringArray.Length; i++)
-            {
-                reList.Add(reStringArray[i]);
-            }
-
-            return reList;
-        }
-        /// <summary>
-        /// 设置最多允许保存的地理围栏数量，超过最大限制后，如果继续创建先删除最早创建的地理围栏。默认数量为10个
-        /// </summary>
-        /// <param name="maxNumber">
-        /// Andorid:允许设置最小1个，最大100个.
-        /// IOS:iOS系统要求最大不能超过20个，否则会报错。
-        /// </param>
-        public static void SetMaxGeofenceNumber(int maxNumber)
-        {
-            #if UNITY_ANDROID
-            SetMaxGeofenceNumberAndroid(maxNumber);
-            #elif UNITY_IOS
-            _setGeofenecMaxCountJpush(maxNumber);
-            #endif
-        }
-        /// <summary>
-        /// 删除地理围栏
-        /// </summary>
-        /// <param name="geofenceid">地理围栏ID</param>
-        public static void DeleteGeofence(string geofenceid)
-        {
-            #if UNITY_ANDROID
-            DeleteGeofenceAndroid(geofenceid);
-            #elif UNITY_IOS
-            _removeGeofenceWithIdentifierJpush(geofenceid);
-            #endif
-        }
-
-        public static void SetMobileNumber(int sequence, string mobileNumber)
-        {
-            #if UNITY_ANDROID
-            SetMobileNumberAndroid(sequence,mobileNumber);
-            #elif UNITY_IOS
-            _setMobileNumberJpush(sequence, mobileNumber);
-            #endif
-        }
 
 
 #if UNITY_ANDROID
 
-        //-----
-        //动态配置 channel，优先级比 AndroidManifest 里配置的高
-        //channel 希望配置的 channel，传 null 表示依然使用 AndroidManifest 里配置的 channel
-        public static void SetChannel(string channel)
-        {
-            _plugin.Call("setChannel",channel);
-        }
+/**
+   * 设置心跳时间间隔
+   * <p>
+   * 需要在Application.onCreate()方法中调用
+   *
+   * @param heartbeatInterval 时间单位为毫秒、必须大于0、默认值是4分50秒\
+   */
+  public static void ConfigHeartbeatIntervalAndroid(long heartbeatInterval) {
+    _plugin.Call("configHeartbeatInterval", heartbeatInterval);
+  }
+
+  /**
+   * 设置长连接重试次数
+   * <p>
+   * 需要在Application.onCreate()方法中调用
+   * @param connectRetryCount 重试的次数、默认值为3、最少3次
+   */
+  public static void ConfigConnectRetryCountAndroid(int connectRetryCount) {
+    _plugin.Call("configConnectRetryCount", connectRetryCount);
+  }
+
+  /**
+   * 配置使用国密加密
+   *
+   * @param context 不为空
+   */
+  public static void ConfigSM4Android() {
+    _plugin.Call("configSM4");
+  }
+
+  /**
+   * 获取当前设备的userId，Engagelab私有云唯一标识，可同于推送
+   *
+   * @param context 不为空
+   * @return userId
+   */
+  public static long GetUserIdAndroid() {
+    return _plugin.Call<long>("getUserId");
+  }
+
+//    // 继承MTCommonReceiver后，复写onNotificationStatus方法，获取通知开关状态，如果enable为true说明已经开启成功
+//    @Override
+//    public void onNotificationStatus(Context context, boolean enable) {
+//        if(enable){
+//            // 已设置通知开关为打开
+//        }
+//    }
+//    启动sdk后可根据onNotificationStatus回调结果，再决定是否需要调用此借口
+  /**
+   * 前往通知开关设置页面
+   *
+   * @param context 不为空 //TODO weiry
+   */
+  public static void GoToAppNotificationSettingsAndroid() {
+    _plugin.Call("goToAppNotificationSettings");
+  }
 
 
-        //用于上报用户的通知栏被打开，或者用于上报用户自定义消息被展示等客户端需要统计的事件。
-        //参数说明
-        //msgId：推送每一条消息和通知对应的唯一 ID
-        public static void ReportNotificationOpened(string msgId)
-        {
-            _plugin.Call("reportNotificationOpened",msgId);
-        }
+  /**
+   * 开启 Push 推送，并持久化存储开关状态为true，默认是true
+   *
+   * @param context 不能为空
+   */
+  public static void TurnOnPushAndroid() {
+    _plugin.Call("turnOnPush");
+  }
 
-        //功能说明
-        //
-        //设置地理围栏监控周期，最小3分钟，最大1天。默认为15分钟，当距离地理围栏边界小于1000米周期自动调整为3分钟。设置成功后一直使用设置周期，不会进行调整。
-        //参数说明
-        //
-        //interval 监控周期，单位是毫秒。
-        public static void SetGeofenceInterval(long interval)
-        {
-            _plugin.Call("setGeofenceInterval", interval);
-        }
+/**
+   * 关闭 push 推送，并持久化存储开关状态为false，默认是true
+   *
+   * @param context 不能为空
+   */
+  public static void TurnOffPushAndroid() {
+    _plugin.Call("turnOffPush");
+  }
 
-        //功能说明
-        //
-        //设置最多允许保存的地理围栏数量，超过最大限制后，如果继续创建先删除最早创建的地理围栏。默认数量为10个，允许设置最小1个，最大100个。
-        //参数说明
-        //
-        //maxNumber 最多允许保存的地理围栏个数
-        public static void SetMaxGeofenceNumberAndroid(int maxNumber)
-        {
-            _plugin.Call("setMaxGeofenceNumber", maxNumber);
-        }
+  /**
+   * 设置通知展示时间，默认任何时间都展示
+   *
+   * @param context   不为空
+   * @param beginHour 允许通知展示的开始时间（ 24 小时制，范围为 0 到 23 ）
+   * @param endHour   允许通知展示的结束时间（ 24 小时制，范围为 0 到 23 ），beginHour不能大于等于endHour
+   * @param weekDays  允许通知展示的星期数组（ 7 日制，范围为 1 到 7），空数组代表任何时候都不展示通知
+   */
+  public static void SetNotificationShowTimeAndroid(
+     int beginHour,int endHour, int[] weekDays) {
+    _plugin.Call(
+        "setNotificationShowTime", beginHour, endHour, weekDays);
+  }
 
+  /**
+   * 重置通知展示时间，默认任何时间都展示
+   *
+   * @param context 不为空
+   */
+  public static void ResetNotificationShowTimeAndroid() {
+    _plugin.Call("resetNotificationShowTime");
+  }
 
-        public static void DeleteGeofenceAndroid(string geofenceid)
-        {
-            _plugin.Call("deleteGeofence", geofenceid);
-        }
+  /**
+   * 设置通知静默时间，默认任何时间都不静默
+   *
+   * @param context     不为空
+   * @param beginHour   允许通知静默的开始时间，单位小时（ 24 小时制，范围为 0 到 23 ）
+   * @param beginMinute 允许通知静默的开始时间，单位分钟（ 60 分钟制，范围为 0 到 59 ）
+   * @param endHour     允许通知静默的结束时间，单位小时（ 24 小时制，范围为 0 到 23 ）
+   * @param endMinute   允许通知静默的结束时间，单位分钟（ 60 分钟制，范围为 0 到 59 ）
+   */
+  public static void SetNotificationSilenceTimeAndroid(
+     int beginHour,int beginMinute,int endHour,int endMinute) {
+    _plugin.Call("setNotificationSilenceTime",
+        beginHour, beginMinute, endHour, endMinute);
+  }
 
-        //调用此 API 设置手机号码。该接口会控制调用频率，频率为 10s 之内最多 3 次。
-        //sequence
-        //用户自定义的操作序列号，同操作结果一起返回，用来标识一次操作的唯一性。
-        //mobileNumber
-        //手机号码。如果传 null 或空串则为解除号码绑定操作。
-        //限制：只能以 “+” 或者 数字开头；后面的内容只能包含 “-” 和数字。
-        public static void SetMobileNumberAndroid(int sequence, string mobileNumber)
-        {
-            _plugin.Call("setMobileNumber", sequence, mobileNumber);
-        }
+  /**
+   * 重置通知静默时间，默认任何时间都不静默
+   *
+   * @param context 不为空
+   */
+  public static void ResetNotificationSilenceTimeAndroid() {
+    _plugin.Call("resetNotificationSilenceTime");
+  }
 
-        //JPush SDK 开启和关闭省电模式，默认为关闭。
-        //参数说明
-        //S
-        //enable 是否需要开启或关闭，true 为开启，false 为关闭
-        public static void SetPowerSaveMode(bool enable)
-        {
-            _plugin.Call("setPowerSaveMode", enable);
-        }
+  /**
+   * 设置通知栏的通知数量，默认数量为5
+   *
+   * @param context 不为空
+   * @param count   限制通知栏的通知数量，超出限制数量则移除最老通知，不能小于等于0
+   */
+  public static void SetNotificationCountAndroid(int count) {
+    _plugin.Call("setNotificationCount", count);
+  }
 
+  /**
+   * 重置通知栏的通知数量，默认数量为5
+   *
+   * @param context 不为空
+   */
+  public static void ResetNotificationCountAndroid() {
+    _plugin.Call("resetNotificationCount");
+  }
 
-        //-------
+/**
+   * 上报厂商通道通知到达
+   * <p>
+   * 走http/https上报
+   *
+   * @param context           不为空
+   * @param messageId         Engagelab消息id，不为空
+   * @param platform          厂商，取值范围（1:mi、2:huawei、3:meizu、4:oppo、5:vivo、8:google）
+   * @param platformMessageId 厂商消息id，可为空
+   */
+  public static void ReportNotificationArrivedAndroid(
+      string messageId,byte platform, string platformMessageId) {
+    _plugin.Call(
+        "reportNotificationArrived", messageId, platform, platformMessageId);
+  }
 
+  /**
+   * 上报厂商通道通知点击
+   * <p>
+   * 走http/https上报
+   *
+   * @param context           不为空
+   * @param messageId         Engagelab消息id，不为空
+   * @param platform          厂商，取值范围（1:mi、2:huawei、3:meizu、4:oppo、5:vivo、8:google）
+   * @param platformMessageId 厂商消息id，可为空
+   */
+  public static void ReportNotificationClickedAndroid(
+    string  messageId,byte platform,string platformMessageId) {
+    _plugin.Call(
+        "reportNotificationClicked", messageId, platform, platformMessageId);
+  }
 
+  /**
+   * 上报厂商通道通知删除
+   * <p>
+   * 走http/https上报
+   *
+   * @param context           不为空
+   * @param messageId         Engagelab消息id，不为空
+   * @param platform          厂商，取值范围（1:mi、2:huawei、3:meizu、4:oppo、5:vivo、8:google）
+   * @param platformMessageId 厂商消息id，可为空
+   */
+  public static void ReportNotificationDeletedAndroid(
+     string messageId,byte platform,string platformMessageId) {
+    _plugin.Call(
+        "reportNotificationDeleted", messageId, platform, platformMessageId);
+  }
 
+  /**
+   * 上报厂商通道通知打开
+   * <p>
+   * 走http/https上报
+   *
+   * @param context           不为空
+   * @param messageId         Engagelab消息id，不为空
+   * @param platform          厂商，取值范围（1:mi、2:huawei、3:meizu、4:oppo、5:vivo、8:google）
+   * @param platformMessageId 厂商消息id，可为空
+   */
+  public static void ReportNotificationOpenedAndroid(
+    string  messageId,byte platform,string platformMessageId) {
+    _plugin.Call(
+        "reportNotificationOpened", messageId, platform, platformMessageId);
+  }
 
-        /// <summary>
-        /// 停止 JPush 推送服务。 
-        /// </summary>
-        public static void StopPush()
-        {
-            _plugin.Call("stopPush");
-        }
-
-        /// <summary>
-        /// 唤醒 JPush 推送服务，使用了 StopPush 必须调用此方法才能恢复。
-        /// </summary>
-        public static void ResumePush()
-        {
-            _plugin.Call("resumePush");
-        }
-
-        /// <summary>
-        /// 判断当前 JPush 服务是否停止。
-        /// </summary>
-        /// <returns>true: 已停止；false: 未停止。</returns>
-        public static bool IsPushStopped()
-        {
-            return _plugin.Call<bool>("isPushStopped");
-        }
-
-        /// <summary>
-        /// 设置允许推送时间。
-        /// </summary>
-        /// <parm name="days">为 0~6 之间由","连接而成的字符串。</parm>
-        /// <parm name="startHour">0~23</parm>
-        /// <parm name="endHour">0~23</parm>
-        public static void SetPushTime(string days, int startHour, int endHour)
-        {
-            _plugin.Call("setPushTime", days, startHour, endHour);
-        }
-
-        /// <summary>
-        /// 设置通知静默时间。
-        /// </summary>
-        /// <parm name="startHour">0~23</parm>
-        /// <parm name="startMinute">0~59</parm>
-        /// <parm name="endHour">0~23</parm>
-        /// <parm name="endMinute">0~23</parm>
-        public static void SetSilenceTime(int startHour, int startMinute, int endHour, int endMinute)
-        {
-            _plugin.Call("setSilenceTime", startHour, startMinute, endHour, endMinute);
-        }
-
-        /// <summary>
-        /// 设置保留最近通知条数。
-        /// </summary>
-        /// <param name="num">要保留的最近通知条数。</param>
-        public static void SetLatestNotificationNumber(int num)
-        {
-            _plugin.Call("setLatestNotificationNumber", num);
-        }
-
-        public static void AddLocalNotification(int builderId, string content, string title, int nId,
-                int broadcastTime, string extrasStr)
-        {
-            _plugin.Call("addLocalNotification", builderId, content, title, nId, broadcastTime, extrasStr);
-        }
-
-        public static void AddLocalNotificationByDate(int builderId, string content, string title, int nId,
-                int year, int month, int day, int hour, int minute, int second, string extrasStr)
-        {
-            _plugin.Call("addLocalNotificationByDate", builderId, content, title, nId,
-                year, month, day, hour, minute, second, extrasStr);
-        }
-
-        public static void RemoveLocalNotification(int notificationId)
-        {
-            _plugin.Call("removeLocalNotification", notificationId);
-        }
-
-        public static void ClearLocalNotifications()
-        {
-            _plugin.Call("clearLocalNotifications");
-        }
-
-        public static void ClearAllNotifications()
-        {
-            _plugin.Call("clearAllNotifications");
-        }
-
-        public static void ClearNotificationById(int notificationId)
-        {
-            _plugin.Call("clearNotificationById", notificationId);
-        }
-
-        /// <summary>
-        /// 用于 Android 6.0 及以上系统申请权限。
-        /// </summary>
-        public static void RequestPermission()
-        {
-            _plugin.Call("requestPermission");
-        }
-
-        public static void SetBasicPushNotificationBuilder()
-        {
-            // 需要根据自己业务情况修改后再调用。
-            int builderId = 1;
-            int notiDefaults = notificationDefaults | DEFAULT_ALL;
-            int notiFlags = notificationFlags | FLAG_AUTO_CANCEL;
-            _plugin.Call("setBasicPushNotificationBuilder", builderId, notiDefaults, notiFlags, null);
-        }
-
-        public static void SetCustomPushNotificationBuilder()
-        {
-            // 需要根据自己业务情况修改后再调用。
-            int builderId = 1;
-            string layoutName = "yourNotificationLayoutName";
-
-            // 指定最顶层状态栏小图标
-            string statusBarDrawableName = "yourStatusBarDrawableName";
-
-            // 指定下拉状态栏时显示的通知图标
-            string layoutIconDrawableName = "yourLayoutIconDrawableName";
-
-            _plugin.Call("setCustomPushNotificationBuilder", builderId, layoutName, statusBarDrawableName, layoutIconDrawableName);
-        }
-
-        public static void InitCrashHandler()
-        {
-            _plugin.Call("initCrashHandler");
-        }
-
-        public static void StopCrashHandler()
-        {
-            _plugin.Call("stopCrashHandler");
-        }
-
-        public static bool GetConnectionState()
-        {
-            return _plugin.Call<bool>("getConnectionState");
-        }
+ /**
+   * 上传厂商token
+   * <p>
+   * 走tcp上传
+   *
+   * @param context  不为空
+   * @param platform 厂商，取值范围（1:mi、2:huawei、3:meizu、4:oppo、5:vivo、8:google）
+   * @param token    厂商返回的token，不为空
+   * @param region    //目前只有小米、OPPO才区分国内和国际版，其他厂商不区分;没有不用传
+   */
+  public static void UploadPlatformTokenAndroid(byte platform,string token,string region) {
+    _plugin.Call("uploadPlatformToken", platform, token, region);
+  }
 
 #endif
 
 #if UNITY_IOS
 
-        public static void SetBadge(int badge)
-        {
-            _setBadgeJpush(badge);
-        }
-
-        public static void ResetBadge()
-        {
-            _resetBadgeJpush();
-        }
-
-        public static void SetApplicationIconBadgeNumber(int badge)
-        {
-            _setApplicationIconBadgeNumberJpush(badge);
-        }
-
-        public static int GetApplicationIconBadgeNumber()
-        {
-            return _getApplicationIconBadgeNumberJpush();
-        }
-
-        public static void StartLogPageView(string pageName)
-        {
-            _startLogPageViewJpush(pageName);
-        }
-
-        public static void StopLogPageView(string pageName)
-        {
-            _stopLogPageViewJpush(pageName);
-        }
-
-        public static void BeginLogPageView(string pageName, int duration)
-        {
-            _beginLogPageViewJpush(pageName, duration);
-        }
-
-        // 本地通知 -start
-
-        public static void SendLocalNotification(string localParams)
-        {
-            _sendLocalNotificationJpush(localParams);
-        }
-
-        public static void SetLocalNotification(int delay, string content, int badge, string idKey) {
-            JsonData jd = new JsonData();
-            jd["alertBody"] = content;
-            jd["idKey"] = idKey;
-            string jsonStr = JsonMapper.ToJson(jd);
-            _setLocalNotificationJpush(delay, badge, jsonStr);
-        }
-
-        public static void DeleteLocalNotificationWithIdentifierKey(string idKey) {
-            JsonData jd = new JsonData();
-            jd["idKey"] = idKey;
-            string jsonStr = JsonMapper.ToJson(jd);
-            _deleteLocalNotificationWithIdentifierKeyJpush(jsonStr);
-        }
-
-        public static void ClearAllLocalNotifications() {
-            _clearAllLocalNotificationsJpush();
-        }
-
-        /// <summary>
-        ///  移除通知中心显示推送和待推送请求，
-        /// </summary>
-        /// <param name="idKeys">要移除的id列表，null 移除所有</param>
-        /// <param name="delivered">ture 显示的通知，false 还没有显示的通知，iOS10以下无效</param>
-        public static void RemoveNotification(List<string> idKeys, bool delivered)
-        {
-            string idKeysStr = "";
-            if (null != idKeys && idKeys.Count > 0)
-            {
-                idKeysStr = JsonHelper.ToJson(idKeys);
-            }
-            _removeNotificationJpush(idKeysStr, delivered);
-
-        }
-
-        public static void RemoveNotificationAll()
-        {
-            _removeNotificationAllJpush();
-
-        }
-
-        /// <summary>
-        ///  查找通知中心显示推送和待推送请求，
-        /// </summary>
-        /// <param name="idKeys">要查找的id列表，null 查找所有</param>
-        /// <param name="delivered">ture 显示的通知，false 还没有显示的通知，iOS10以下无效</param>
-        //public static void FindNotification(List<string> idKeys, bool delivered)
-        //{
-        //    string idKeysStr = "";
-        //    if (null != idKeys && idKeys.Count > 0)
-        //    {
-        //        idKeysStr = JsonHelper.ToJson(idKeys);
-        //    }
-        //    _findNotification(idKeysStr, delivered);
-
-        //}
-
-
-        // 本地通知 - end
-
-        //其他 - start
-
-  
-        /// <summary>
-        /// 用于统计用户应用崩溃日志,如果需要统计 Log 信息，调用该接口。当你需要自己收集错误信息时，切记不要调用该接口。
-        /// </summary>
-        public static void CrashLogON()
-        {
-            _crashLogONJpush();
-
-        }
-
-        /// <summary>
-        /// 地理位置上报
-        /// </summary>
-        /// <param name="latitude">纬度</param>
-        /// <param name="longitude">经度</param>
-        public static void SetLatitude(double latitude, double longitude)
-        {
-            _setLatitudeJpush( latitude, longitude);
-
-        }
-        //其他 - end
-
-
-        [DllImport("__Internal")]
-        private static extern void _initJpush(string gameObject);
-
-        [DllImport("__Internal")]
-        private static extern void _setDebugJpush(bool enable);
-
-        [DllImport("__Internal")]
-        private static extern string _getRegistrationIdJpush();
-
-        [DllImport("__Internal")]
-        private static extern void _setTagsJpush(int sequence, string tags);
-
-        [DllImport("__Internal")]
-        private static extern void _addTagsJpush(int sequence, string tags);
-
-        [DllImport("__Internal")]
-        private static extern void _deleteTagsJpush(int sequence, string tags);
-
-        [DllImport("__Internal")]
-        private static extern void _cleanTagsJpush(int sequence);
-
-        [DllImport("__Internal")]
-        private static extern void _getAllTagsJpush(int sequence);
-
-        [DllImport("__Internal")]
-        private static extern void _checkTagBindStateJpush(int sequence, string tag);
-
-
-        [DllImport("__Internal")]
-        private static extern string _filterValidTagsJpush(string tags);
-
-
-        [DllImport("__Internal")]
-        private static extern void _setAliasJpush(int sequence, string alias);
-
-        [DllImport("__Internal")]
-        private static extern void _deleteAliasJpush(int sequence);
-
-        [DllImport("__Internal")]
-        private static extern void _getAliasJpush(int sequence);
-
-        [DllImport("__Internal")]
-        private static extern void _setBadgeJpush(int badge);
-
-        [DllImport("__Internal")]
-        private static extern void _resetBadgeJpush();
-
-        [DllImport("__Internal")]
-        private static extern void _setApplicationIconBadgeNumberJpush(int badge);
-
-        [DllImport("__Internal")]
-        private static extern int _getApplicationIconBadgeNumberJpush();
-
-        [DllImport("__Internal")]
-        private static extern void _startLogPageViewJpush(string pageName);
-
-        [DllImport("__Internal")]
-        private static extern void _stopLogPageViewJpush(string pageName);
-
-        [DllImport("__Internal")]
-        private static extern void _beginLogPageViewJpush(string pageName, int duration);
-
-        [DllImport("__Internal")]
-        public static extern void _setLocalNotificationJpush(int delay, int badge, string alertBodyAndIdKey);
-
-        [DllImport("__Internal")]
-        public static extern void _sendLocalNotificationJpush(string localParams);
         
         [DllImport("__Internal")]
-        public static extern void _deleteLocalNotificationWithIdentifierKeyJpush(string idKey);
+        private static extern void _initMTPush(string gameObject);
 
         [DllImport("__Internal")]
-        public static extern void _clearAllLocalNotificationsJpush();
-
-
-
-        ///    调用此 API 来设置最大的地理围栏监听个数，默认值为10
-        ///    参数说明
-        ///    count
-        ///    类型要求为NSInteger 类型
-        ///    默认值为10
-        ///    iOS系统要求最大不能超过20个，否则会报错。
-        [DllImport("__Internal")]
-        public static extern void _setGeofenecMaxCountJpush(int count);
-
-        /// <summary>
-        /// 删除地理围栏
-        /// </summary>
-        /// <param name="geofenceId">地理围栏ID</param>
-        [DllImport("__Internal")]
-        public static extern void _removeGeofenceWithIdentifierJpush(string geofenceId);
-
-
-        //功能说明
-        //API 用于统计用户应用崩溃日志
-        //调用说明
-        //如果需要统计 Log 信息，调用该接口。当你需要自己收集错误信息时，切记不要调用该接口。
-        [DllImport("__Internal")]
-        public static extern void _crashLogONJpush();
-
-        //   功能说明
-
-        //用于短信补充功能。设置手机号码后，可实现“推送不到短信到”的通知方式，提高推送达到率。
-        //参数说明
-        //mobileNumber 手机号码。只能以 “+” 或者数字开头，后面的内容只能包含 “-” 和数字，并且长度不能超过 20。如果传 nil 或空串则为解除号码绑定操作
-        //completion 响应回调。成功则 error 为空，失败则 error 带有错误码及错误信息，具体错误码详见错误码定义
-        //调用说明
-        //此接口调用频率有限制，10s 之内最多 3 次。建议在登录成功以后，再调用此接口。结果信息通过 completion 异步返回，也可将completion 设置为 nil 不处理结果信息。
-        [DllImport("__Internal")]
-        public static extern void _setMobileNumberJpush(int sequence,string mobileNumber);
+        private static extern void _configDebugMode(bool enable);
 
         [DllImport("__Internal")]
-        public static extern void _setLatitudeJpush(double latitude, double longitude);
-
-        /// <summary>
-        ///  移除通知中心显示推送和待推送请求，
-        /// </summary>
-        /// <param name="idKey">要移除的id列表，null 移除所有</param>
-        /// <param name="delivered">ture 显示的通知，false 还没有显示的通知，iOS10以下无效</param>
-        [DllImport("__Internal")]
-        public static extern void _removeNotificationJpush(string idKey, bool delivered);
-
+        private static extern string _getRegistrationId();
 
         [DllImport("__Internal")]
-        public static extern void _removeNotificationAllJpush();
+        private static extern void _setNotificationBadge(int badge);
 
-        /// <summary>
-        ///  查找通知中心显示推送和待推送请求，
-        /// </summary>
-        /// <param name="idKey">要查找的id列表，null 查找所有</param>
-        /// <param name="delivered">ture 显示的通知，false 还没有显示的通知，iOS10以下无效</param>
-        //[DllImport("__Internal")]
-        //public static extern void _findNotification(string idKey, bool delivered);
+        [DllImport("__Internal")]
+        private static extern void _resetNotificationBadge(int sequence, string tags);
+
 #endif
     }
 }

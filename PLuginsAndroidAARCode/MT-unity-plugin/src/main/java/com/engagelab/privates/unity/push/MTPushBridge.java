@@ -46,7 +46,7 @@ public class MTPushBridge {
     }
 
 
-    public void init(String gameObject) {
+    public void initMTPush(String gameObject) {
         MTPushBridge.gameObject = gameObject;
         MTPushPrivatesApi.init(getApplicationContext());
     }
