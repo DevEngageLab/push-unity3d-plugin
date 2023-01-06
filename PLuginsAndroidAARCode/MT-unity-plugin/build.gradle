@@ -1,11 +1,8 @@
 buildscript {
     repositories {
         google()
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
         mavenCentral()
-        maven{ url'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+        maven { url 'https://developer.huawei.com/repo/' }
 
     }
     dependencies {
@@ -13,6 +10,13 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+    }
+}
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 
@@ -45,10 +49,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     provided files('libsprovided/unity-classes.jar')
-//    compile files('libs/jcore-android-2.1.2.jar')
-//    compile files('libs/jpush-android-3.3.4.jar')
+    implementation 'com.engagelab:engagelab:3.0.0.release'
+    implementation 'com.engagelab.plugin:google:3.0.0.release'
+    implementation 'com.google.firebase:firebase-messaging:23.0.8'
+    implementation 'com.engagelab.plugin:huawei:3.0.0.release'
+    implementation 'com.huawei.hms:push:6.5.0.300'
+    implementation 'com.engagelab.plugin:mi_global:3.0.0.release'
+    implementation 'com.engagelab.plugin:meizu:3.0.0.release'
+    implementation 'com.engagelab.plugin:oppo:3.0.0.release'
+    implementation 'com.engagelab.plugin:oppo_msp_push:3.0.0.release'
+    implementation 'com.engagelab.plugin:vivo:3.0.0.release'
 }
 
 repositories {
