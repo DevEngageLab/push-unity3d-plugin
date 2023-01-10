@@ -11,13 +11,13 @@ using LitJson;
 // @version v3.1.0
 namespace MTPush
 {
-    public class JPushBinding : MonoBehaviour
+    public class MTPushBinding : MonoBehaviour
     {
         #if UNITY_ANDROID
 
         private static AndroidJavaObject _plugin;
 
-        static JPushBinding()
+        static MTPushBinding()
         {
             using (AndroidJavaClass jpushClass = new AndroidJavaClass("com.engagelab.privates.unity.push.MTPushBridge"))
             {

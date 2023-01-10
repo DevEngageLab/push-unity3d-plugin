@@ -1,14 +1,20 @@
 # API 说明
 
-## 注册监听
+## 监听，回调的消息
 
-### FlutterPluginEngagelab.addEventHandler （android/ios都支持）
+### onMTReceiver(string messageJson) （android/ios都支持）
 
 集成了 sdk 回调的事件
+```
+{
+"event_name": "",//事件类型
+"event_data": ""//事件内容
+}
+```
 
 #### 参数说明
-- message:反回的事件数据
-  - message["event_name"]: 为事件类型
+- messageJson:反回的事件数据
+  - "event_name": 为事件类型
     - android:
       - "onNotificationStatus":应用通知开关状态回调,内容类型为boolean，true为打开，false为关闭
       - "onConnectStatus":长连接状态回调,内容类型为boolean，true为连接
@@ -22,18 +28,17 @@
       - "didReceiveNotificationResponse":通知消息点击回调，内容为通知消息体
       - "networkDidReceiveMessage":自定义消息回调，内容为通知消息体
       - "networkDidLogin":登陆成功
-  - message["event_data"]: 为对应内容
+  - "event_data": 为对应内容
 
 
 #### 代码示例
 
 ```js
-FlutterPluginEngagelab.addEventHandler(
-        onMTCommonReceiver: (Map<String, dynamic> message) async {
-  FlutterPluginEngagelab.printMy("flutter onMTCommonReceiver: $message");
-  String event_name = message["event_name"];
-  String event_data = message["event_data"];
-});
+void onMTReceiver(string jsonStr)
+{
+  Debug.Log("recv----onMTReceiver-----" + jsonStr);
+  str_unity = jsonStr;
+}
 ```
 
 ## 初始化

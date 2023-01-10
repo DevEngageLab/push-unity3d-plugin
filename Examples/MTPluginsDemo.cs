@@ -17,8 +17,8 @@ public class MTPluginsDemo : MonoBehaviour
     void Start()
     {
         gameObject.name = "Main Camera";
-        JPushBinding.ConfigDebugMode(true);
-        JPushBinding.InitMTPush(gameObject.name);
+        MTPushBinding.ConfigDebugMode(true);
+        MTPushBinding.InitMTPush(gameObject.name);
     }
 
     // Update is called once per frame
@@ -44,7 +44,7 @@ public class MTPluginsDemo : MonoBehaviour
 
         if (GUILayout.Button("getRegistrationId", GUILayout.Height(80)))
         {
-            string registrationId = JPushBinding.GetRegistrationId();
+            string registrationId = MTPushBinding.GetRegistrationId();
             Debug.Log("------>registrationId: " + registrationId);
             str_unity = "registrationId: "+registrationId;
         }
