@@ -222,67 +222,46 @@ android.useAndroidX=true
    - AdSupport.framework（获取 IDFA 需要；如果不使用 IDFA，请不要添加）
    - UserNotifications.framework（Xcode 8 及以上）
    - libresolv.tbd（JPush 2.2.0 及以上版本需要，Xcode 7 以下版本是 libresolv.dylib）
-   - WebKit.framework（JPush 3.3.0 及以上版本需要）
-
-
+   - StoreKit.framework 
+   - libsqlite3.tbd 
+   
       ​
 
-3. 在 UnityAppController.mm 中添加头文件 `JPUSHService.h`  。
+3. 在 UnityAppController.mm 中添加头文件 `MTPushUnityManager.h`  。
 
     ```Objective-C
-    #import "JPUSHService.h"
-    #import "JPushEventCache.h"
-    #import <UserNotifications/UserNotifications.h>
-
-    // 如需使用广告标识符 IDFA 则添加该头文件，否则不添加。
-    #import <AdSupport/AdSupport.h>
-
-    @interface UnityAppController ()
-    @end
+   #include <MTPushUnityManager.h>
+   #import <AdSupport/AdSupport.h>// 如需使用广告标识符 IDFA 则添加该头文件，否则不添加。
+   #import <AppTrackingTransparency/AppTrackingTransparency.h>// 如需使用广告标识符 IDFA 则添加该头文件，否则不添加。
     ```
 
 4. 在 UnityAppController.mm 的下列方法中添加以下代码：
 
     ```Objective-C
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+   
+   __block NSString *advertisingId = nil;
+   //    if (@available(iOS 14, *)) {
+   //        //设置Info.plist中 NSUserTrackingUsageDescription 需要广告追踪权限，用来定位唯一用户标识
+   //        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+   //            if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
+   //                advertisingId = [[ASIdentifierManager sharedManager] advertisingIdentifier].UUIDString;
+   //            }
+   //        }];
+   //    } else {
+   //        // 使用原方式访问 IDFA
+   //        advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+   //    }
 
-      [[JPushEventCache sharedInstance] handFinishLaunchOption:launchOptions];
-      /*
-        不使用 IDFA 启动 SDK。
-        参数说明：
-            appKey: 极光官网控制台应用标识。
-            channel: 频道，暂无可填任意。
-            apsForProduction: YES: 发布环境；NO: 开发环境。
-      */
-      [JPUSHService setupWithOption:launchOptions appKey:@"abcacdf406411fa656ee11c3" channel:@"" apsForProduction:NO];
-
-      /*
-        使用 IDFA 启动 SDK（不能与上述方法同时使用）。
-        参数说明：
-            appKey: 极光官网控制台应用标识。
-            channel: 频道，暂无可填任意。
-            apsForProduction: YES: 发布环境；NO: 开发环境。
-            advertisingIdentifier: IDFA广告标识符。根据自身情况选择是否带有 IDFA 的启动方法，并注释另外一个启动方法。
-      */
-    //  NSString *advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    //  [JPUSHService setupWithOption:launchOptions appKey:@"替换成你自己的 Appkey" channel:@"" apsForProduction:NO SadvertisingIdentifier:advertisingId];
-
+    [[MTPushUnityInstnce sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions advertisingId:advertisingId];
+    
       return YES;
     }
 
     - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
       // Required.
-      [JPUSHService registerDeviceToken:deviceToken];
-    }
-
-    - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-      // Required.
-      [[JPushEventCache sharedInstance] sendEvent:userInfo withKey:@"JPushPluginReceiveNotification"];
-      [JPUSHService handleRemoteNotification:userInfo];
-    }
-
-    - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))handler {
-      [[JPushEventCache sharedInstance] sendEvent:userInfo withKey:@"JPushPluginReceiveNotification"];
+    [[MTPushUnityInstnce sharedInstance] application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
     }
     ```
     
@@ -297,27 +276,11 @@ android.useAndroidX=true
 
     否则
 
-    didReceiveRemoteNotification
     didRegisterForRemoteNotificationsWithDeviceToken
-    didReceiveRemoteNotification
 
     都将无法使用
 ```
 ## API 说明
 
-Android 与 iOS [通用 API](/Doc/CommonAPI.md)。
+Android 与 iOS [API](/Doc/CommonAPI.md)。
 
-### Android
-
-[Android API](/Doc/AndroidAPI.md)
-
-> ./Plugins/Android/jpush-unity-plugin 为插件的 Android 项目，可以使用 Android Studio 打开并进行修改（比如，targetSdkVersion 或者 minSdkVersion），再 build 为 .aar 替换已有的 jpush.aar。
-
-### iOS
-
-[iOS API](/Doc/iOSAPI.md)
-
-## 更多
-
-- [JPush 官网文档](http://docs.jiguang.cn/guideline/jpush_guide/)
-- 有问题可访问[极光社区](http://community.jpush.cn/)搜索和提问。

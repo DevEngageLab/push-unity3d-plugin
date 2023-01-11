@@ -18,7 +18,13 @@ public class MTPluginsDemo : MonoBehaviour
     {
         gameObject.name = "Main Camera";
         MTPushBinding.ConfigDebugMode(true);
-        MTPushBinding.InitMTPush(gameObject.name);
+        #if UNITY_ANDROID
+        MTPushBinding.InitMTPushAndroid(gameObject.name);
+          #endif
+
+          #if UNITY_IOS
+        MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
+          #endif
     }
 
     // Update is called once per frame
