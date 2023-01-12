@@ -51,14 +51,13 @@ void onMTReceiver(string jsonStr)
 #### 接口定义
 
 ```js
-if (Platform.isIOS) {
-  FlutterPluginEngagelab.initIos(
-          appKey: "你的appkey",
-          channel: "testChannel",
-);
-} else if (Platform.isAndroid) {
-  FlutterPluginEngagelab.initAndroid();
-}
+#if UNITY_ANDROID
+MTPushBinding.InitMTPushAndroid(gameObject.name);
+#endif
+
+#if UNITY_IOS
+MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
+#endif
 ```
 
 ## 开启 Debug 模式
@@ -70,7 +69,7 @@ if (Platform.isIOS) {
 #### 接口定义
 
 ```js
-FlutterPluginEngagelab.configDebugMode(enable)
+MTPushBinding.ConfigDebugMode(enable)
 ```
 
 #### 参数说明
@@ -80,7 +79,7 @@ FlutterPluginEngagelab.configDebugMode(enable)
 #### 代码示例
 
 ```js
-FlutterPluginEngagelab.configDebugMode(true);//发布前要删除掉
+MTPushBinding.ConfigDebugMode(true);//发布前要删除掉
 ```
 
 ## 获取 RegistrationID （android/ios都支持）
@@ -93,7 +92,7 @@ RegistrationID 定义:
 #### 接口定义
 
 ```js
-FlutterPluginEngagelab.getRegistrationId()
+MTPushBinding.GetRegistrationId()
 ```
 
 #### 返回值
@@ -103,7 +102,5 @@ FlutterPluginEngagelab.getRegistrationId()
 #### 代码示例
 
 ```js
-FlutterPluginEngagelab.getRegistrationId().then((rid){
-  FlutterPluginEngagelab.printMy("flutter get registration id : $rid");
-});
+string registrationId = MTPushBinding.GetRegistrationId();
 ```
