@@ -282,5 +282,5 @@ android.useAndroidX=true
 ```
 ## API 说明
 
-Android 与 iOS [API](/Doc/CommonAPI.md)。
+[API](/Doc/CommonAPI.md)。
 
