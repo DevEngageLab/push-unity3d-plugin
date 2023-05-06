@@ -356,6 +356,14 @@ namespace MTPush
 #endif
 
 #if UNITY_IOS
+ public static void SetTcpSSL(bool enable) {
+    _setTcpSSL(enable);
+  }
+#endif
+
+
+#if UNITY_IOS
+
 
         
         [DllImport("__Internal")]
@@ -372,6 +380,9 @@ namespace MTPush
 
         [DllImport("__Internal")]
         private static extern void _resetNotificationBadge();
+
+        [DllImport("__Internal")]
+        private static extern void _setTcpSSL(bool enable);
 
 #endif
     }
