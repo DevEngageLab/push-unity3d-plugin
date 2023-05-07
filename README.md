@@ -77,7 +77,8 @@ manifestPlaceholders = [
                 OPPO_APPSECRET         : "",
                 //VIVO厂商信息
                 VIVO_APPID             : "",
-                VIVO_APPKEY            : ""
+                VIVO_APPKEY            : "",
+                HONOR_APPID            : ""
         ]
 ```
 - 最后例子：
