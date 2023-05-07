@@ -144,8 +144,11 @@ void _initMTPush(char *gameObject,char *config) {
              advertisingIdentifier:advertisingId];
     
     NSData * deviceToken = _deviceToken;
-    [MTPushService registerDeviceToken:deviceToken];
-    
+    JPLog(@"Device Token deviceToken: %@", deviceToken);
+    if (nil != deviceToken) {
+        JPLog(@"Device Token set deviceToken: %@", deviceToken);
+        [MTPushService registerDeviceToken:deviceToken];
+    }
 }
 
 void _configDebugMode(bool enable) {
@@ -153,6 +156,11 @@ void _configDebugMode(bool enable) {
     if (enable) {
         [MTPushService setDebugMode];
     }
+}
+
+void _setTcpSSL(bool enable) {
+    JPLog(@"_setTcpSSL:enable %d",enable);
+    [MTPushService setTcpSSL:enable];
 }
 
 const char *_getRegistrationId() {
@@ -259,10 +267,7 @@ static MTPushUnityInstnce * _sharedService = nil;
                              ntohl(tokenBytes[6]), ntohl(tokenBytes[7])];
     JPLog(@"Device Token: %@", tokenString);
     _deviceToken = deviceToken;
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [MTPushService registerDeviceToken:deviceToken];
-//    });
-    
+    [MTPushService registerDeviceToken:deviceToken];
 }
 
 

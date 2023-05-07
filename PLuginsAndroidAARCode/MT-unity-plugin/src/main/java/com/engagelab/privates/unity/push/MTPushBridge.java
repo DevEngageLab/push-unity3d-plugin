@@ -33,6 +33,7 @@ public class MTPushBridge {
     public static void onCommonReceiver(String name, String data) {
         logD(TAG, "onCommonReceiver name =" + name);
         logD(TAG, "onCommonReceiver data =" + data);
+        logD(TAG, "onCommonReceiver gameObject =" + gameObject);
         try {
             if (null != gameObject) {
                 JSONObject dataJosn = new JSONObject();
@@ -473,7 +474,7 @@ public class MTPushBridge {
 
     }
 
-    private static boolean DEBUG = false;
+    public static boolean DEBUG = false;
 
     public static void logD(String tag, String msg) {
         if (DEBUG) {
