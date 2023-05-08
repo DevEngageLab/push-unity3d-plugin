@@ -23,7 +23,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onNotificationStatus(Context context, boolean enable) {
         MTPushBridge.logD(TAG, "onNotificationStatus:" + enable);
-        MTPushBridge.onCommonReceiver("onNotificationStatus", enable + "");
+        MTPushBridge.onCommonReceiver("onNotificationStatus", MsgToJson.booleanToJson(enable));
     }
 
     /**
@@ -35,7 +35,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onConnectStatus(Context context, boolean enable) {
         MTPushBridge.logD(TAG, "onConnectState:" + enable);
-        MTPushBridge.onCommonReceiver("onConnectStatus", enable + "");
+        MTPushBridge.onCommonReceiver("onConnectStatus", MsgToJson.booleanToJson(enable));
     }
 
     /**
@@ -47,7 +47,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onNotificationArrived(Context context, NotificationMessage notificationMessage) {
         MTPushBridge.logD(TAG, "onNotificationArrived:" + notificationMessage.toString());
-        MTPushBridge.onCommonReceiver("onNotificationArrived", notificationMessage.toString());
+        MTPushBridge.onCommonReceiver("onNotificationArrived", MsgToJson.notificationMessageToJson(notificationMessage));
     }
 
     /**
@@ -59,7 +59,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onNotificationClicked(Context context, NotificationMessage notificationMessage) {
         MTPushBridge.logD(TAG, "onNotificationClicked:" + notificationMessage.toString());
-        MTPushBridge.onCommonReceiver("onNotificationClicked", notificationMessage.toString());
+        MTPushBridge.onCommonReceiver("onNotificationClicked", MsgToJson.notificationMessageToJson(notificationMessage));
     }
 
     /**
@@ -71,7 +71,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onNotificationDeleted(Context context, NotificationMessage notificationMessage) {
         MTPushBridge.logD(TAG, "onNotificationDeleted:" + notificationMessage.toString());
-        MTPushBridge.onCommonReceiver("onNotificationDeleted", notificationMessage.toString());
+        MTPushBridge.onCommonReceiver("onNotificationDeleted", MsgToJson.notificationMessageToJson(notificationMessage));
     }
 
     /**
@@ -83,7 +83,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onCustomMessage(Context context, CustomMessage customMessage) {
         MTPushBridge.logD(TAG, "onCustomMessage:" + customMessage.toString());
-        MTPushBridge.onCommonReceiver("onCustomMessage", customMessage.toString());
+        MTPushBridge.onCommonReceiver("onCustomMessage", MsgToJson.customMessageToJson(customMessage));
     }
 
     /**
@@ -95,7 +95,7 @@ public class UserReceiver extends MTCommonReceiver {
     @Override
     public void onPlatformToken(Context context, PlatformTokenMessage platformTokenMessage) {
         MTPushBridge.logD(TAG, "onPlatformToken:" + platformTokenMessage.toString());
-        MTPushBridge.onCommonReceiver("onPlatformToken", platformTokenMessage.toString());
+        MTPushBridge.onCommonReceiver("onPlatformToken", MsgToJson.platformTokenMessageToJson(platformTokenMessage));
     }
 
 }
