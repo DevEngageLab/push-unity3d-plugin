@@ -10,7 +10,9 @@ import com.unity3d.player.UnityPlayer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -18,6 +20,7 @@ public class MTPushBridge {
     private static final String TAG = "MTPushBridge";
 
     private static MTPushBridge mtPushBridge;
+    private static List<CommonReceiverCache> onCommonReceiverCache = new ArrayList<CommonReceiverCache>();
 
     private Context mContext;
     static String gameObject;
@@ -30,7 +33,7 @@ public class MTPushBridge {
     }
 
 
-    public static void onCommonReceiver(String name, String data) {
+    public static synchronized void onCommonReceiver(String name, String data) {
         logD(TAG, "onCommonReceiver name =" + name);
         logD(TAG, "onCommonReceiver data =" + data);
         logD(TAG, "onCommonReceiver gameObject =" + gameObject);
@@ -40,9 +43,40 @@ public class MTPushBridge {
                 dataJosn.put("event_name", name);
                 dataJosn.put("event_data", data);
                 UnityPlayer.UnitySendMessage(gameObject, "onMTReceiver", dataJosn.toString());
+            } else {
+                onCommonReceiverCache.add(new CommonReceiverCache(name, data));
             }
         } catch (Throwable e) {
             e.printStackTrace();
+        }
+    }
+
+    private static synchronized void sendCommonReceiverCache() {
+        if (!onCommonReceiverCache.isEmpty()) {
+            logD(TAG, "sendCommonReceiverCache:" + onCommonReceiverCache.size());
+            for (CommonReceiverCache c : onCommonReceiverCache) {
+                onCommonReceiver(c.getName(), c.getData());
+            }
+            onCommonReceiverCache.clear();
+        }
+    }
+
+
+    private static class CommonReceiverCache {
+        private String name;
+        private String data;
+
+        public CommonReceiverCache(String name, String data) {
+            this.name = name;
+            this.data = data;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getData() {
+            return data;
         }
     }
 
@@ -51,6 +85,7 @@ public class MTPushBridge {
         logD(TAG, "initMTPush:" + gameObject);
         MTPushBridge.gameObject = gameObject;
         MTPushPrivatesApi.init(getApplicationContext());
+        sendCommonReceiverCache();
     }
 
 
