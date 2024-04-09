@@ -19,12 +19,14 @@ public class MTPluginsDemo : MonoBehaviour
         gameObject.name = "Main Camera";
         MTPushBinding.ConfigDebugMode(true);
         #if UNITY_ANDROID
-        MTPushBinding.InitMTPushAndroid(gameObject.name);
-          #endif
+            MTPushBinding.InitMTPushAndroid(gameObject.name);
+        #endif
 
-          #if UNITY_IOS
-        MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
-          #endif
+        #if UNITY_IOS
+            MTPushBinding.SetSiteName("Singapore");
+            MTPushBinding.InitMTPushIos(gameObject.name,"fcc545917674d6f06c141704",false,"demo",false);
+            // MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
+        #endif
     }
 
     // Update is called once per frame
@@ -54,6 +56,70 @@ public class MTPluginsDemo : MonoBehaviour
             Debug.Log("------>registrationId: " + registrationId);
             str_unity = "registrationId: "+registrationId;
         }
+
+        if (GUILayout.Button("setTags", GUILayout.Height(80)))
+        {
+            List<string> tags = new List<string> ();
+            tags.Add("111");
+            tags.Add("222");
+			MTPushBinding.SetTags(callbackId++, tags);
+        }
+
+        if (GUILayout.Button("setAlias", GUILayout.Height(80)))
+        {
+            MTPushBinding.SetAlias(2, "replaceYourAlias");
+        }
+
+        if (GUILayout.Button("addTags", GUILayout.Height(80)))
+        {
+            List<string> tags = new List<string>(){"addtag1", "addtag2"};
+            MTPushBinding.AddTags(callbackId++, tags);
+        }
+
+        if (GUILayout.Button("deleteTags", GUILayout.Height(80)))
+        {
+            List<string> tags = new List<string>();
+            tags.Add("addtag1");
+            tags.Add("addtag2");
+
+            MTPushBinding.DeleteTags(callbackId++, tags);
+        }
+
+        if (GUILayout.Button("cleanTags", GUILayout.Height(80)))
+        {
+            MTPushBinding.CleanTags(callbackId++);
+        }
+
+        if (GUILayout.Button("get all tags", GUILayout.Height(80)))
+        {
+            MTPushBinding.GetAllTags(callbackId++);
+        }
+
+        if (GUILayout.Button("getAlias", GUILayout.Height(80)))
+        {
+            MTPushBinding.GetAlias(callbackId++);
+            Debug.Log("Alias 将在 onMTReceiver 中回调");
+        }
+
+        if (GUILayout.Button("check tag is binding", GUILayout.Height(80)))
+        {
+            MTPushBinding.CheckTagBindState(callbackId++,"addtag1");
+            Debug.Log("Alias 将在 onMTReceiver 中回调");
+        }
+
+        if (GUILayout.Button("filterValidTags", GUILayout.Height(80)))
+        {
+            List<string> tags = new List<string>();
+            tags.Add("1");
+            tags.Add("2");
+            tags.Add("3");
+            tags.Add("4");
+            List<string> reList = MTPushBinding.FilterValidTags(tags);
+            string str = string.Join(",", reList.ToArray());
+            Debug.Log("filterValidTags reList:" + str);
+            str_unity = str;
+        }
+
     }
 
     /* data format
