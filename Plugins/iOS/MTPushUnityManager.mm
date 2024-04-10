@@ -54,7 +54,7 @@ NSData * _deviceToken;
 #if defined(__cplusplus)
 extern "C" {
 #endif
-const char *tagCallbackName_ = "onMTReceiver";
+const char *messageCallbackName_ = "onMTReceiver";
 
 static char *MakeHeapString(const char *string) {
     if (!string){
@@ -102,6 +102,36 @@ NSString *messageAsDictionary(NSDictionary * dic) {
     return [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
 }
 
+void mtcallBackChannel(NSString* eventName ,NSString* arguments){
+    NSMutableDictionary *data = @{}.mutableCopy;
+    data[@"event_name"] = eventName;
+    data[@"event_data"] = arguments;
+    
+//        NSString *toC = [data toJsonString];
+    JPLog(@"toC：%@",data);
+    UnitySendMessage([gameObjectName UTF8String], messageCallbackName_, messageAsDictionary(data).UTF8String);
+};
+
+MTPushTagsOperationCompletion tagsOperationCompletion = ^(NSInteger iResCode, NSSet *iTags, NSInteger seq) {
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    [dic setObject:[NSNumber numberWithInteger:seq] forKey:@"sequence"];
+    [dic setValue:[NSNumber numberWithUnsignedInteger:iResCode] forKey:@"code"];
+    if (iResCode == 0) {
+        dic[@"tags"] = [iTags allObjects];
+    }
+    mtcallBackChannel(@"OnTagOperateResult", [dic toJsonString]);
+};
+
+MTPushAliasOperationCompletion aliasOperationCompletion = ^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
+    NSMutableDictionary* dic = [[NSMutableDictionary alloc] init];
+    [dic setObject:[NSNumber numberWithInteger:seq] forKey:@"sequence"];
+    [dic setValue:[NSNumber numberWithUnsignedInteger:iResCode] forKey:@"code"];
+    if (iResCode == 0) {
+        [dic setObject:iAlias forKey:@"alias"];
+    }
+    mtcallBackChannel(@"OnAliasOperateResult", [dic toJsonString]);
+};
+
 
 
 NSInteger integerValue(int intValue) {
@@ -114,6 +144,12 @@ int intValue(NSInteger integerValue) {
     return [n intValue];
 }
 // private - end
+
+void _setSiteName(char * siteName) {
+    NSString *site = [NSString stringWithUTF8String:siteName];
+    JPLog(@"_setSiteName: %@",site);
+    [MTPushService setSiteName:site];
+}
 
 void _initMTPush(char *gameObject,char *config) {
     gameObjectName = [NSString stringWithUTF8String:gameObject];
@@ -169,8 +205,7 @@ const char *_getRegistrationId() {
     return MakeHeapString([registrationID UTF8String]);
 }
 
-
-
+#pragma mark - Badge
 void _setNotificationBadge(const int badge){
     JPLog(@"_setNotificationBadge  %d",badge);
     [MTPushService setBadge:integerValue(badge)];
@@ -180,6 +215,113 @@ void _resetNotificationBadge(){
     JPLog(@"_resetNotificationBadge");
     [MTPushService resetBadge];
 }
+
+
+#pragma mark - Tag & Alias - start
+void _setTagsJpush(int sequence, const char *tags) {
+    NSString *nsTags = CreateNSString(tags);
+    if (![nsTags length]) {
+        return;
+    }
+    
+    NSData *data = [nsTags dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = APNativeJSONObject(data);
+    NSArray *array = dict[@"Items"];
+    NSSet *set = [[NSSet alloc] initWithArray:array];
+    
+    [MTPushService setTags:set completion:tagsOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _addTagsJpush(int sequence, char *tags) {
+    NSString* tagsJsonStr = CreateNSString(tags);
+    
+    NSData *data = [tagsJsonStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = APNativeJSONObject(data);
+    NSArray *tagArr = dict[@"Items"];
+    NSSet *tagSet = [[NSSet alloc] initWithArray:tagArr];
+    
+    [MTPushService addTags:tagSet completion:tagsOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _deleteTagsJpush(int sequence, char *tags) {
+    NSString *tagsJsonStr = CreateNSString(tags);
+    
+    NSData *data = [tagsJsonStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = APNativeJSONObject(data);
+    NSArray *tagArr = dict[@"Items"];
+    NSSet *tagSet = [[NSSet alloc] initWithArray:tagArr];
+    
+    [MTPushService deleteTags:tagSet completion:tagsOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _cleanTagsJpush(int sequence) {
+    [MTPushService cleanTags:tagsOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _getAllTagsJpush(int sequence) {
+    [MTPushService getAllTags:tagsOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _checkTagBindStateJpush(int sequence, char *tag) {
+    NSString *nsTag = CreateNSString(tag);
+    [MTPushService validTag:nsTag completion:^(NSInteger iResCode, NSSet *iTags, NSInteger seq, BOOL isBind) {
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+        [dic setObject:[NSNumber numberWithInteger:seq] forKey:@"sequence"];
+        [dic setValue:[NSNumber numberWithUnsignedInteger:iResCode] forKey:@"code"];
+        
+        if (iResCode == 0) {
+            [dic setObject:[iTags allObjects] forKey:@"tags"];
+            [dic setObject:[NSNumber numberWithBool:isBind] forKey:@"isBind"];
+        }
+        
+        mtcallBackChannel(@"OnTagOperateResult", [dic toJsonString]);
+    } seq:(NSInteger)sequence];
+}
+
+const char * _filterValidTagsJpush(char *tags){
+    
+    NSString *nsTags = CreateNSString(tags);
+    if (![nsTags length]) {
+        return nil;
+    }
+    
+    NSData *data = [nsTags dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *dict = APNativeJSONObject(data);
+    NSArray *array = dict[@"Items"];
+    NSSet *set = [[NSSet alloc] initWithArray:array];
+    
+    NSSet *rSet =  [MTPushService filterValidTags:set];
+    
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    
+    if ([rSet count]) {
+        dic[@"Items"] = [rSet allObjects];
+    } else {
+        return  nil;
+    }
+    
+    return MakeHeapString([messageAsDictionary(dic) UTF8String]);
+    
+}
+
+void _setAliasJpush(int sequence, const char * alias){
+    NSString *nsAlias = CreateNSString(alias);
+    if (![nsAlias length]) {
+        return ;
+    }
+    
+    [MTPushService setAlias:nsAlias completion:aliasOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _getAliasJpush(int sequence) {
+    [MTPushService getAlias:aliasOperationCompletion seq:(NSInteger)sequence];
+}
+
+void _deleteAliasJpush(int sequence) {
+    [MTPushService deleteAlias:aliasOperationCompletion seq:(NSInteger)sequence];
+}
+
+
 
 
 //other - end
@@ -269,21 +411,6 @@ static MTPushUnityInstnce * _sharedService = nil;
     _deviceToken = deviceToken;
     [MTPushService registerDeviceToken:deviceToken];
 }
-
-
-
-//-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{
-//  [MTPushService handleRemoteNotification:userInfo];
-//  NSLog(@"iOS6及以下系统，收到通知:%@", [self logDic:userInfo]);
-//}
-//
-//-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler{
-//    [MTPushService handleRemoteNotification:userInfo];
-//    NSLog(@"iOS7及以上系统，收到通知:%@", [self logDic:userInfo]);
-//    completionHandler(UIBackgroundFetchResultNewData);
-//}
-
-
 
 //ok
 - (void)mtpNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler  API_AVAILABLE(ios(10.0)){
@@ -433,6 +560,6 @@ static MTPushUnityInstnce * _sharedService = nil;
     
     //    NSString *toC = [data toJsonString];
     JPLog(@"toC：%@",data);
-    UnitySendMessage([gameObjectName UTF8String], tagCallbackName_, messageAsDictionary(data).UTF8String);
+    UnitySendMessage([gameObjectName UTF8String], messageCallbackName_, messageAsDictionary(data).UTF8String);
 }
 @end

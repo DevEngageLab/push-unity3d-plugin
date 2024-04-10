@@ -2,6 +2,7 @@ package com.engagelab.privates.unity.push;
 
 import android.content.Context;
 import android.util.Log;
+import android.text.TextUtils;
 
 import com.engagelab.privates.core.api.MTCorePrivatesApi;
 import com.engagelab.privates.push.api.MTPushPrivatesApi;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class MTPushBridge {
@@ -508,6 +510,71 @@ public class MTPushBridge {
         MTPushPrivatesApi.uploadPlatformToken(context, platform, token, region);
 
     }
+
+
+   void setSiteName(String siteName) {
+       Context context = getApplicationContext();
+       MTCorePrivatesApi.configAppSiteName(context,siteName);
+   }
+
+
+    void setTags(int sequence, String tagsJsonStr) {
+        if (TextUtils.isEmpty(tagsJsonStr)) {
+            return;
+        }
+        Context context = getApplicationContext();
+        String[] arr =  JsonUtil.jsonToArr(tagsJsonStr);
+        MTPushPrivatesApi.updateTag(context, sequence, arr);
+    }
+
+     void addTags(int sequence, String tagsJsonStr) {
+        if (TextUtils.isEmpty(tagsJsonStr)) {
+            return;
+        }
+        Context context = getApplicationContext();
+        String[] arr =  JsonUtil.jsonToArr(tagsJsonStr);
+        MTPushPrivatesApi.addTag(context, sequence, arr);
+    }
+
+     void deleteTags(int sequence, String tagsJsonStr) {
+        if (TextUtils.isEmpty(tagsJsonStr)) {
+            return;
+        }
+        Context context = getApplicationContext();
+        String[] arr =  JsonUtil.jsonToArr(tagsJsonStr);
+        MTPushPrivatesApi.deleteTag(context, sequence, arr);
+    }
+
+     void cleanTags(int sequence) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.deleteAllTag(context, sequence);
+    }
+
+     void getAllTags(int sequence) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.queryAllTag(context, sequence);
+    }
+
+     void checkTagBindState(int sequence, String tag) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.queryTag(context, sequence, tag);
+    }
+
+     void setAlias(int sequence, String alias) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.setAlias(context, sequence, alias);
+    }
+
+     void deleteAlias(int sequence) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.clearAlias(context, sequence);
+    }
+
+     void getAlias(int sequence) {
+         Context context = getApplicationContext();
+        MTPushPrivatesApi.getAlias(context, sequence);
+    }
+
 
     public static boolean DEBUG = false;
 
