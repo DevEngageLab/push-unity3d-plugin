@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.gson.Gson;
+
 public class JsonUtil {
     public static Set<String> jsonToSet(String tagsJsonStr) {
         Set<String> tagSet = new LinkedHashSet<String>();
@@ -45,6 +47,12 @@ public class JsonUtil {
             e.printStackTrace();
         }
         return itemsJsonObj.toString();
+    }
+
+    public static String[] jsonToArr(String jsonString) {
+        Gson gson = new Gson();
+        String[] stringArray = gson.fromJson(jsonString, String[].class);
+        return stringArray;
     }
 
 }

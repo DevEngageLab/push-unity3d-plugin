@@ -3,9 +3,11 @@ package com.engagelab.privates.unity.push;
 import android.content.Context;
 
 import com.engagelab.privates.common.component.MTCommonReceiver;
+import com.engagelab.privates.push.api.AliasMessage;
 import com.engagelab.privates.push.api.CustomMessage;
 import com.engagelab.privates.push.api.NotificationMessage;
 import com.engagelab.privates.push.api.PlatformTokenMessage;
+import com.engagelab.privates.push.api.TagMessage;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -96,6 +98,19 @@ public class UserReceiver extends MTCommonReceiver {
     public void onPlatformToken(Context context, PlatformTokenMessage platformTokenMessage) {
         MTPushBridge.logD(TAG, "onPlatformToken:" + platformTokenMessage.toString());
         MTPushBridge.onCommonReceiver("onPlatformToken", MsgToJson.platformTokenMessageToJson(platformTokenMessage));
+    }
+
+
+    @Override
+    public void onTagMessage(Context context, TagMessage tagMessage) {
+        MTPushBridge.logD(TAG,"onTagMessage:" + tagMessage.toString());
+        MTPushBridge.onCommonReceiver("OnTagOperateResult", MsgToJson.tagMessageToJson(tagMessage));
+    }
+
+    @Override
+    public void onAliasMessage(Context context, AliasMessage aliasMessage) {
+        MTPushBridge.logD(TAG,"onAliasMessage:" + aliasMessage.toString());
+        MTPushBridge.onCommonReceiver("OnAliasOperateResult", MsgToJson.aliasMessageToJson(aliasMessage));
     }
 
 }
