@@ -107,19 +107,6 @@ public class MTPluginsDemo : MonoBehaviour
             Debug.Log("Alias 将在 onMTReceiver 中回调");
         }
 
-        if (GUILayout.Button("filterValidTags", GUILayout.Height(80)))
-        {
-            List<string> tags = new List<string>();
-            tags.Add("1");
-            tags.Add("2");
-            tags.Add("3");
-            tags.Add("4");
-            List<string> reList = MTPushBinding.FilterValidTags(tags);
-            string str = string.Join(",", reList.ToArray());
-            Debug.Log("filterValidTags reList:" + str);
-            str_unity = str;
-        }
-
     }
 
     /* data format
