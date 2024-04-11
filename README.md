@@ -78,6 +78,8 @@ manifestPlaceholders = [
                 ENGAGELAB_PRIVATES_APPKEY : "你的appkey",
                 ENGAGELAB_PRIVATES_CHANNEL: "developer",
                 ENGAGELAB_PRIVATES_PROCESS: ":remote",
+                //数据中心名称，填空""时，默认"Singapore"数据中心
+                ENGAGELAB_PRIVATES_SITE_NAME: "Singapore",
                 //以下厂商可选
                 //小米海外厂商信息
                 XIAOMI_GLOBAL_APPID            : "",
@@ -152,6 +154,8 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
 
 
 ### iOS
+
+## ！！！ 注意，使用unity生成iOS项目后，如果提示SDK的xcframework包里面缺少 "info.plist"文件，把插件xcframework包中的info.plist文件拷贝到项目中插件xcframework包中。
 
 1. 生成 iOS 工程，并打开该工程。
 2. 添加必要的框架：
