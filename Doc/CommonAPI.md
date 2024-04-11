@@ -23,11 +23,15 @@
       - "onNotificationDeleted":通知消息删除回调，内容为通知消息体
       - "onCustomMessage":自定义消息回调，内容为通知消息体
       - "onPlatformToken":厂商token消息回调，内容为厂商token消息体
+      - "OnTagOperateResult":标签操作消息回调
+      - "OnAliasOperateResult":别名操作消息回调
     - ios:
       - "willPresentNotification":通知消息到达回调，内容为通知消息体
       - "didReceiveNotificationResponse":通知消息点击回调，内容为通知消息体
       - "networkDidReceiveMessage":自定义消息回调，内容为通知消息体
       - "networkDidLogin":登陆成功
+      - "OnTagOperateResult":标签操作消息回调
+      - "OnAliasOperateResult":别名操作消息回调
   - "event_data": 为对应内容
 
 
@@ -58,6 +62,28 @@ MTPushBinding.InitMTPushAndroid(gameObject.name);
 #if UNITY_IOS
 MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
 #endif
+```
+
+### setSiteName
+
+设置数据中心的名字，安卓也需要在launcherTemplate.gradle中manifestplaceholder 中设置
+//数据中心名称，填空""时，默认"Singapore"数据中心
+ENGAGELAB_PRIVATES_SITE_NAME: "xxx",
+
+#### 接口定义
+
+```js
+MTPushBinding.setSiteName('xxx')
+```
+
+#### 返回值
+
+无
+
+#### 代码示例
+
+```js
+MTPushBinding.setSiteName('xxx');
 ```
 
 ## 开启 Debug 模式
@@ -104,3 +130,102 @@ MTPushBinding.GetRegistrationId()
 ```js
 string registrationId = MTPushBinding.GetRegistrationId();
 ```
+
+
+## 标签与别名
+
+### SetTags(int sequence, List<string> tags)
+
+给当前设备设置标签。
+
+注意该操作是覆盖逻辑，即每次调用会覆盖之前已经设置的标签。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- tags: 标签列表。
+  - 有效的标签组成：字母（区分大小写）、数字、下划线、汉字、特殊字符（@!#$&*+=.|）。
+  - 限制：每个 tag 命名长度限制为 40 字节，单个设备最多支持设置 1000 个 tag，且单次操作总长度不得超过 5000 字节（判断长度需采用 UTF-8 编码）。
+
+### AddTags(int sequence, List<string> tags)
+
+给当前设备在已有的基础上新增标签。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- tags: 标签列表。
+
+### DeleteTags(int sequence, List<string> tags)
+
+删除标签。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- tags: 标签列表。
+
+### CleanTags(int sequence)
+
+清空标签。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+
+### GetAllTags(int sequence)
+
+获取当前设备的所有标签。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+
+### CheckTagBindState(int sequence, string tag)
+
+检查指定标签是否已经绑定。
+
+`OnTagOperateResult` 回调中会附带 `isBind` 属性。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- tag: 待查询的标签。
+
+### SetAlias(int sequence, string alias)
+
+设置别名，每个设备只会有一个别名。
+
+注意：该接口是覆盖逻辑，即新的调用会覆盖之前的设置。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
+- alias: 要设置的别名。
+  - 有效的别名组成：字母（区分大小写）、数字、下划线、汉字、特殊字符（@!#$&*+=.|）。
+  - 限制：alias 命名长度限制为 40 字节（判断长度需采用 UTF-8 编码）。
+
+### DeleteAlias(int sequence)
+
+删除当前设备设置的别名。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
+
+### GetAlias(int sequence)
+
+获取当前设备设置的别名。
+
+#### 参数说明
+
+- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
+
+
+### FilterValidTags(List<string> tags)  // only ios
+
+过滤非法tag
+
+#### 参数说明
+
+- tags: tag列表
