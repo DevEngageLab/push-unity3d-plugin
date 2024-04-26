@@ -157,6 +157,11 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
 
 ## ！！！ 注意，使用unity生成iOS项目后，如果提示SDK的xcframework包里面缺少 "info.plist"文件，把插件xcframework包中的info.plist文件拷贝到项目中插件xcframework包中。
 
+## 或者，在拷贝插件时，直接保留相应的调试包。
+## 插件iOS目录中，有SDK包 mtpush-ios-x.x.x.xcframework ,包里面有两个文件夹
+ - "ios-arm64" 是真机架构，用于真机运行调试以及上架发布。当需要在真机上运行时请保留此文件夹并删除其他。
+ - "ios-arm64_×86_64-simulator" 是模拟器架构，用于模拟器运行调试。如果需要运行 iOS 模拟器请保留此文件夹并删除其他（即当工程配置 iOS Target SDK 指定为 Simulator SDK 时）。
+
 1. 生成 iOS 工程，并打开该工程。
 2. 添加必要的框架：
 

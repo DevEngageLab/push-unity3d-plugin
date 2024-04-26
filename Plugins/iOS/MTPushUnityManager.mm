@@ -209,11 +209,13 @@ const char *_getRegistrationId() {
 void _setNotificationBadge(const int badge){
     JPLog(@"_setNotificationBadge  %d",badge);
     [MTPushService setBadge:integerValue(badge)];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = integerValue(badge);
 }
 
 void _resetNotificationBadge(){
     JPLog(@"_resetNotificationBadge");
     [MTPushService resetBadge];
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
 }
 
 
@@ -321,7 +323,13 @@ void _deleteAliasJpush(int sequence) {
     [MTPushService deleteAlias:aliasOperationCompletion seq:(NSInteger)sequence];
 }
 
-
+#pragma mark - other
+void _openSettingsForNotification() {
+    JPLog(@"_openSettingsForNotification");
+    [MTPushService openSettingsForNotification:^(BOOL success) {
+        
+    }];
+}
 
 
 //other - end

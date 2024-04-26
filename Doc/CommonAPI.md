@@ -229,3 +229,25 @@ string registrationId = MTPushBinding.GetRegistrationId();
 #### 参数说明
 
 - tags: tag列表
+
+
+
+## 打开通知设置界面 
+
+### GoToAppNotificationSettingsAndroid （android）
+### OpenSettingsForNotificationIOS （ios）
+
+初始化sdk
+
+#### 接口定义
+
+```js
+#if UNITY_ANDROID
+MTPushBinding.GoToAppNotificationSettingsAndroid();
+#endif
+
+#if UNITY_IOS
+MTPushBinding.OpenSettingsForNotificationIOS();
+#endif
+```
+```

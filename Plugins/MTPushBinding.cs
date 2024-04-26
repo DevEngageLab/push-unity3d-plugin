@@ -349,6 +349,13 @@ namespace MTPush
             return reList;
         }
 
+        /**
+          * 打开iOS通知设置页面
+          */
+        public static void OpenSettingsForNotificationIOS() {
+             _openSettingsForNotification();
+        }
+
 #endif
 
 
@@ -639,6 +646,9 @@ namespace MTPush
 
         [DllImport("__Internal")]
         private static extern void _getAliasJpush(int sequence);
+
+        [DllImport("__Internal")]
+        private static extern void _openSettingsForNotification();
 
 
 #endif
