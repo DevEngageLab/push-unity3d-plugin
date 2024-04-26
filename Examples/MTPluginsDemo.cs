@@ -107,6 +107,28 @@ public class MTPluginsDemo : MonoBehaviour
             Debug.Log("Alias 将在 onMTReceiver 中回调");
         }
 
+        if (GUILayout.Button("OpenSettingsForNotification", GUILayout.Height(80)))
+        {
+            #if UNITY_ANDROID
+                MTPushBinding.GoToAppNotificationSettingsAndroid();
+            #endif
+
+            #if UNITY_IOS
+                MTPushBinding.OpenSettingsForNotificationIOS();
+            #endif
+        }
+
+        if (GUILayout.Button("set badge : 5", GUILayout.Height(80)))
+        {
+            MTPushBinding.SetNotificationBadge(5);
+        }
+
+        if (GUILayout.Button("reset badge", GUILayout.Height(80)))
+        {
+            MTPushBinding.ResetNotificationBadge();
+        }
+
+
     }
 
     /* data format
