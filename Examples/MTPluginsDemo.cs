@@ -128,6 +128,13 @@ public class MTPluginsDemo : MonoBehaviour
             MTPushBinding.ResetNotificationBadge();
         }
 
+        if (GUILayout.Button("get notification status - IOS", GUILayout.Height(80)))
+        {
+            #if UNITY_IOS
+            MTPushBinding.GetNotificationAuthorizationIOS();
+            #endif
+        }
+
 
     }
 

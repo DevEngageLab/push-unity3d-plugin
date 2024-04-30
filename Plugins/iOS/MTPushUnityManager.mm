@@ -331,6 +331,12 @@ void _openSettingsForNotification() {
     }];
 }
 
+void _getNotificationAuthorization() {
+    JPLog(@"_getNotificationAuthorization");
+    [MTPushService requestNotificationAuthorization:^(MTPushAuthorizationStatus status) {
+        mtcallBackChannel(@"OnNotificationAuthorizationResult", [@{@"status":@(status)} toJsonString]);
+    }];
+}
 
 //other - end
 

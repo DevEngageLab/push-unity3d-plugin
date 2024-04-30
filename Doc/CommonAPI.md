@@ -32,6 +32,7 @@
       - "networkDidLogin":登陆成功
       - "OnTagOperateResult":标签操作消息回调
       - "OnAliasOperateResult":别名操作消息回调
+      - "OnNotificationAuthorizationResult":通知的状态
   - "event_data": 为对应内容
 
 
