@@ -356,6 +356,15 @@ namespace MTPush
              _openSettingsForNotification();
         }
 
+        /**
+          * 获取iOS通知开启状态
+          * 在回调事件OnNotificationAuthorizationResult中显示当前的通知状态
+          * {"status": 1} , status: 0 - 尚未授权 1 - 拒绝 2 - 开启 
+          */
+        public static void GetNotificationAuthorizationIOS() {
+             _getNotificationAuthorization();
+        }
+
 #endif
 
 
@@ -650,6 +659,8 @@ namespace MTPush
         [DllImport("__Internal")]
         private static extern void _openSettingsForNotification();
 
+        [DllImport("__Internal")]
+        private static extern void _getNotificationAuthorization();
 
 #endif
     }
