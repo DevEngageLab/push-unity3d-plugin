@@ -1,6 +1,7 @@
 package com.engagelab.privates.unity.push;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.engagelab.privates.core.api.MTCorePrivatesApi;
 
@@ -13,15 +14,18 @@ import java.io.InputStreamReader;
 
 public class MTPushApplication extends Application {
     private static final String TAG = "MTPushApplication";
+    private static Context mtContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        init();
+        mtContext = getApplicationContext();
+        init(mtContext);
     }
 
-    public void init() {
+    public static void init(Context context) {
         try {
+            mtContext = context;
             String mtpush_config = getFromAssets("mt_engagelab_push_config");
             if (null != mtpush_config) {
                 MTPushBridge.logD(TAG, "mt_engagelab_push_config:" + mtpush_config);
@@ -38,33 +42,33 @@ public class MTPushApplication extends Application {
         }
     }
 
-    private void setDebug(JSONObject jsonObject) {
+    private static void setDebug(JSONObject jsonObject) {
         if (jsonObject.has("debug")){
             boolean debug = jsonObject.optBoolean("debug", false);
-            MTCorePrivatesApi.configDebugMode(getApplicationContext(),debug);
+            MTCorePrivatesApi.configDebugMode(mtContext,debug);
             MTPushBridge.DEBUG = debug;
         }
     }
-    private void setTcpSSL(JSONObject jsonObject) {
+    private static void setTcpSSL(JSONObject jsonObject) {
         if (jsonObject.has("tcp_ssl")){
             boolean tcp_ssl = jsonObject.optBoolean("tcp_ssl", false);
             MTCorePrivatesApi.setTcpSSl(tcp_ssl);
         }
     }
 
-    private void testGoogle(JSONObject jsonObject) {
+    private static void testGoogle(JSONObject jsonObject) {
         if (jsonObject.has("testGoogle")) {
             boolean ret = jsonObject.optBoolean("testGoogle", false);
             if (ret == true) {
-                MTCorePrivatesApi.testConfigGoogle(getApplicationContext(), ret);
+                MTCorePrivatesApi.testConfigGoogle(mtContext, true);
             }
         }
     }
 
 
-    public String getFromAssets(String fileName) {
+    public static String getFromAssets(String fileName) {
         try {
-            InputStreamReader inputReader = new InputStreamReader(getResources().getAssets().open(fileName));
+            InputStreamReader inputReader = new InputStreamReader(mtContext.getResources().getAssets().open(fileName));
             BufferedReader bufReader = new BufferedReader(inputReader);
             String line = "";
             String Result = "";
