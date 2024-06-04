@@ -52,7 +52,8 @@ public class JsonUtil {
     public static String[] jsonToArr(String jsonString) {
         String[] strings = new String[]{};
         try {
-            JSONArray jsonArray = new JSONArray(jsonString);
+            JSONObject itemsJsonObj = new JSONObject(jsonString);
+            JSONArray jsonArray = itemsJsonObj.getJSONArray("Items");
             strings = new String[jsonArray.length()];
             for (int i = 0; i < jsonArray.length(); i++) {
                 strings[i] = jsonArray.getString(i);
