@@ -147,7 +147,8 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
 ```
 {
 	"tcp_ssl": true,//true为tcp使用ssl加密
-	"debug":true//debug 模式，true为打印debug日志
+	"debug":true, //debug 模式，true为打印debug日志
+    "testGoogle": true // true可以测试fcm，只试用于测试。在正式环境时请设置为false或删除该项。
 }
 ```
 具体可参考Examples下  mt_engagelab_push_config 文件

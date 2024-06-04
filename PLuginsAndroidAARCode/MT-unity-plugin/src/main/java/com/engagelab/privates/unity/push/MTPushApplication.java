@@ -28,6 +28,7 @@ public class MTPushApplication extends Application {
                 JSONObject jsonObject = new JSONObject(mtpush_config);
                 setDebug(jsonObject);
                 setTcpSSL(jsonObject);
+                testGoogle(jsonObject);
             } else {
                 MTPushBridge.logD(TAG, "mt_engagelab_push_config is null");
             }
@@ -48,6 +49,15 @@ public class MTPushApplication extends Application {
         if (jsonObject.has("tcp_ssl")){
             boolean tcp_ssl = jsonObject.optBoolean("tcp_ssl", false);
             MTCorePrivatesApi.setTcpSSl(tcp_ssl);
+        }
+    }
+
+    private void testGoogle(JSONObject jsonObject) {
+        if (jsonObject.has("testGoogle")) {
+            boolean ret = jsonObject.optBoolean("testGoogle", false);
+            if (ret == true) {
+                MTCorePrivatesApi.testConfigGoogle(getApplicationContext(), ret);
+            }
         }
     }
 
