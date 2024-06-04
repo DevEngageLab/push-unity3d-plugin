@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.google.gson.Gson;
+import org.json.JSONArray;
 
 public class JsonUtil {
     public static Set<String> jsonToSet(String tagsJsonStr) {
@@ -50,9 +50,17 @@ public class JsonUtil {
     }
 
     public static String[] jsonToArr(String jsonString) {
-        Gson gson = new Gson();
-        String[] stringArray = gson.fromJson(jsonString, String[].class);
-        return stringArray;
+        String[] strings = new String[]{};
+        try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+            strings = new String[jsonArray.length()];
+            for (int i = 0; i < jsonArray.length(); i++) {
+                strings[i] = jsonArray.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return strings;
     }
 
 }
