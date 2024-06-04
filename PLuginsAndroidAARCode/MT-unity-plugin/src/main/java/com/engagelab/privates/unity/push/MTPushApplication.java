@@ -19,7 +19,8 @@ public class MTPushApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        init(getApplicationContext());
+        mtContext = getApplicationContext();
+        init(mtContext);
     }
 
     public static void init(Context context) {
