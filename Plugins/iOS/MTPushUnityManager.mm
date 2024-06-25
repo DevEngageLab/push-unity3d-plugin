@@ -390,11 +390,6 @@ static MTPushUnityInstnce * _sharedService = nil;
         //    }
     }
     [MTPushService registerForRemoteNotificationConfig:entity delegate:[MTPushUnityInstnce sharedInstance]];
-
-    
-    
-    // 检测通知授权情况。可选项，不一定要放在此处，可以运行一定时间后再调用
-    [self performSelector:@selector(checkNotificationAuthorization) withObject:nil afterDelay:10];
     
     
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
