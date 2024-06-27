@@ -129,20 +129,20 @@ namespace MTPush
   }
 
   /**
-   * 设置siteName
+   * 设置siteName , 该接口废弃，不需要调用
    *
    * @param context 不为空
    */
   public static void SetSiteName(string siteName) {
-            #if UNITY_ANDROID
-             _plugin.Call("setSiteName", siteName);
+            // #if UNITY_ANDROID
+            //  _plugin.Call("setSiteName", siteName);
 
-            #elif UNITY_IOS
-             _setSiteName(siteName);
+            // #elif UNITY_IOS
+            //  _setSiteName(siteName);
 
-            #else
+            // #else
 
-            #endif
+            // #endif
   }
 
 

@@ -43,32 +43,32 @@ apply plugin: 'com.huawei.agconnect'
 ```
     
     //必须 主包
-    implementation 'com.engagelab:engagelab:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab:engagelab:4.3.9' // 此处以4.3.9 版本为例。
     //可选，google厂商
-    implementation 'com.engagelab.plugin:google:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:google:4.3.9' // 此处以4.3.9 版本为例。
     //可选，honor厂商
-    implementation 'com.engagelab.plugin:honor:3.4.0' // 此处以3.4.0 版本为例。
-    implementation 'com.engagelab.plugin:honor_th_push:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:honor:4.3.9' // 此处以4.3.9 版本为例。
+    implementation 'com.engagelab.plugin:honor_th_push:4.3.9' // 此处以4.3.9 版本为例。
     //可选，huawei厂商
-    implementation 'com.engagelab.plugin:huawei:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:huawei:4.3.9' // 此处以4.3.9 版本为例。
     //可选，mi厂商，海外版
-    implementation 'com.engagelab.plugin:mi_global:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:mi_global:4.3.9' // 此处以4.3.9 版本为例。
     //可选，meizu厂商
-    implementation 'com.engagelab.plugin:meizu:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:meizu:4.3.9' // 此处以4.3.9 版本为例。
     //可选，oppo厂商
-    implementation 'com.engagelab.plugin:oppo:3.4.0' // 此处以3.4.0 版本为例。
-    implementation 'com.engagelab.plugin:oppo_th_push:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:oppo:4.3.9' // 此处以4.3.9 版本为例。
+    implementation 'com.engagelab.plugin:oppo_th_push:4.3.9' // 此处以4.3.9 版本为例。
     //可选，vivo厂商
-    implementation 'com.engagelab.plugin:vivo:3.4.0' // 此处以3.4.0 版本为例。
+    implementation 'com.engagelab.plugin:vivo:4.3.9' // 此处以4.3.9 版本为例。
 
     // google push need，不需要 google 通道，则删除
-    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-messaging:23.2.0'
 
     // huawei push need，不需要 huawei 通道，则删除
-    implementation 'com.huawei.hms:push:6.7.0.300'
+    implementation 'com.huawei.hms:push:6.11.0.300'
     //oppo以下依赖都需要添加，不需要 oppo 通道，则删除
-    implementation 'com.google.code.gson:gson:2.6.2'
-    implementation 'commons-codec:commons-codec:1.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'commons-codec:commons-codec:1.13'
     implementation 'androidx.annotation:annotation:1.1.0'
     
 ```
@@ -78,12 +78,10 @@ manifestPlaceholders = [
                 ENGAGELAB_PRIVATES_APPKEY : "你的appkey",
                 ENGAGELAB_PRIVATES_CHANNEL: "developer",
                 ENGAGELAB_PRIVATES_PROCESS: ":remote",
-                //数据中心名称，填空""时，默认"Singapore"数据中心
-                ENGAGELAB_PRIVATES_SITE_NAME: "Singapore",
                 //以下厂商可选
-                //小米海外厂商信息
-                XIAOMI_GLOBAL_APPID            : "",
-                XIAOMI_GLOBAL_APPKEY           : "",
+                //小米厂商信息
+                XIAOMI_APPID            : "",
+                XIAOMI_APPKEY           : "",
                 //MEIZU厂商信息
                 MEIZU_APPID            : "",
                 MEIZU_APPKEY           : "",
@@ -94,6 +92,7 @@ manifestPlaceholders = [
                 //VIVO厂商信息
                 VIVO_APPID             : "",
                 VIVO_APPKEY            : "",
+                //荣耀厂商信息
                 HONOR_APPID            : ""
         ]
 ```
