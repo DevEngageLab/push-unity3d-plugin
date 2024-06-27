@@ -23,7 +23,7 @@ public class MTPluginsDemo : MonoBehaviour
         #endif
 
         #if UNITY_IOS
-            MTPushBinding.SetSiteName("Singapore");
+            // MTPushBinding.SetSiteName("Singapore"); //不用再调用该接口设置
             MTPushBinding.InitMTPushIos(gameObject.name,"fcc545917674d6f06c141704",false,"demo",false);
             // MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
         #endif
