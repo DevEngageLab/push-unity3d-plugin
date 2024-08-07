@@ -1,102 +1,102 @@
 # MTPush Unity Plugin
 
-## 集成
+## Setup
 
-把Plugins文件夹里的文件合并到您自己的项目Assets/Plugins文件夹下面
+Place the files in the Plugins folder into your own project's Assets/Plugins folder.
 
 ### Android
 
-1. 生成build文件：
-   在 Unity 中选择 *File---Build Settings---Player Settings*
-   ---Publishing Settings ---- Build 勾上选以下选项下：
+1. Generate build file:
+   In Unity, Select *File---Build Settings---Player Settings*
+   ---Publishing Settings ---- Build , Check the following options：
 *  Custom Launcher Gradle Template
 *  Custom Gradle Properties Template
 *  Custom Base Gradle Template
 *  Custom LauncherManifest
 
-##### 会生成以下文件
-*  launcherTemplate.gradle文件
-*  gradleTemplate.properties文件
-*  baseProjectTemplate.gradle文件
-*  LauncherManifest.xml文件
+##### The following files will be generated
+*  launcherTemplate.gradle
+*  gradleTemplate.properties
+*  baseProjectTemplate.gradle
+*  LauncherManifest.xml
 
-#### 修改baseProjectTemplate.gradle文件：
-在两个repositories中添加
+#### Modify the baseProjectTemplate.gradle file:
+Add the following code in both repositories files
 ```
 google()
 jcenter()
 mavenCentral()
-maven { url 'https://developer.huawei.com/repo/' }//华为厂商需要
+maven { url 'https://developer.huawei.com/repo/' }//Huawei manufacturers need
 ```
-具体可参考Examples下 baseProjectTemplate.gradle文件
+For details, please refer to the baseProjectTemplate.gradle file under Examples
 
-#### 修改launcherTemplate.gradle文件：
-- 在最上面加
+#### Modify the launcherTemplate.gradle file：
+- Add the following code at the top of the file
 ```
 apply plugin: 'com.android.application'
-// google push need，不需要 google 通道，则删除
+// google push need, if you don’t need google channel, delete it
 apply plugin: 'com.google.gms.google-services'
-// huawei push need，不需要 huawei 通道，则删除
+// huawei push need, if the huawei channel is not needed, delete it
 apply plugin: 'com.huawei.agconnect'
 ```
-- 在dependencies里面加
+- Add the following code at dependencies file.
 ```
     
-    //必须 主包
-    implementation 'com.engagelab:engagelab:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，google厂商
-    implementation 'com.engagelab.plugin:google:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，honor厂商
-    implementation 'com.engagelab.plugin:honor:4.4.0' // 此处以4.4.0 版本为例。
-    implementation 'com.engagelab.plugin:honor_th_push:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，huawei厂商
-    implementation 'com.engagelab.plugin:huawei:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，mi厂商，海外版
-    implementation 'com.engagelab.plugin:mi_global:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，meizu厂商
-    implementation 'com.engagelab.plugin:meizu:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，oppo厂商
-    implementation 'com.engagelab.plugin:oppo:4.4.0' // 此处以4.4.0 版本为例。
-    implementation 'com.engagelab.plugin:oppo_th_push:4.4.0' // 此处以4.4.0 版本为例。
-    //可选，vivo厂商
-    implementation 'com.engagelab.plugin:vivo:4.4.0' // 此处以4.4.0 版本为例。
+    //Required 
+    implementation 'com.engagelab:engagelab:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，google manufacturer
+    implementation 'com.engagelab.plugin:google:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，honor manufacturer
+    implementation 'com.engagelab.plugin:honor:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:honor_th_push:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，huawei manufacturer
+    implementation 'com.engagelab.plugin:huawei:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，mi manufacturer
+    implementation 'com.engagelab.plugin:mi_global:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，meizu manufacturer
+    implementation 'com.engagelab.plugin:meizu:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，oppo manufacturer
+    implementation 'com.engagelab.plugin:oppo:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:oppo_th_push:4.4.0' // Here we take version 4.4.0 as an example.
+    //Optional，vivo manufacturer
+    implementation 'com.engagelab.plugin:vivo:4.4.0' // Here we take version 4.4.0 as an example.
 
-    // google push need，不需要 google 通道，则删除
+    // google push need, if you don’t need google channel, delete it
     implementation 'com.google.firebase:firebase-messaging:23.2.0'
 
-    // huawei push need，不需要 huawei 通道，则删除
+    // huawei push need, if the huawei channel is not needed, delete it
     implementation 'com.huawei.hms:push:6.11.0.300'
-    //oppo以下依赖都需要添加，不需要 oppo 通道，则删除
+    // The following dependencies of oppo need to be added. If the oppo channel is not required, delete it.
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'commons-codec:commons-codec:1.13'
     implementation 'androidx.annotation:annotation:1.1.0'
     
 ```
-- 在defaultConfig里面加,并填写对应信息
+- Add it to defaultConfig and fill in the corresponding information
 ```
 manifestPlaceholders = [
-                ENGAGELAB_PRIVATES_APPKEY : "你的appkey",
+                ENGAGELAB_PRIVATES_APPKEY : "your appkey",
                 ENGAGELAB_PRIVATES_CHANNEL: "developer",
                 ENGAGELAB_PRIVATES_PROCESS: ":remote",
-                //以下厂商可选
-                //小米厂商信息
+                // The following manufacturers are available
+                // Xiaomi manufacturer information
                 XIAOMI_APPID            : "",
                 XIAOMI_APPKEY           : "",
-                //MEIZU厂商信息
+                // MEIZU manufacturer information
                 MEIZU_APPID            : "",
                 MEIZU_APPKEY           : "",
-                //OPPO厂商信息
+                // OPPO manufacturer information
                 OPPO_APPID             : "",
                 OPPO_APPKEY            : "",
                 OPPO_APPSECRET         : "",
-                //VIVO厂商信息
+                // VIVO manufacturer information
                 VIVO_APPID             : "",
                 VIVO_APPKEY            : "",
-                //荣耀厂商信息
+                // Honor manufacturer information
                 HONOR_APPID            : ""
         ]
 ```
-- 在最后面，SPLITS_VERSION_CODE LAUNCHER_SOURCE_BUILD_SETUP 前加
+- Add before code SPLITS_VERSION_CODE LAUNCHER_SOURCE_BUILD_SETUP
 ```
 task copyJsonFile {
     copy {
@@ -108,62 +108,65 @@ task copyJsonFile {
 
     copy {
         delete("agconnect-services.json")
-        from('您的agconnect-services.json路径')
+        from('Your agconnect-services.json file path')
         into('./')
         include("agconnect-services.json")
     }
 
     copy {
         delete("src/main/assets/mt_engagelab_push_config")
-        from('您的mt_engagelab_push_config文件路径')
+        from('Your mt_engagelab_push_config file path')
         into('src/main/assets/')
         include("mt_engagelab_push_config")
     }
 }
 preBuild.dependsOn copyJsonFile
 ```
-具体可参考Examples下  launcherTemplate.gradle 文件
+For details, please refer to the launcherTemplate.gradle file under Examples
 
 
 
-#### 修改gradleTemplate.properties文件：
-添加以下内容
+#### Modify the gradleTemplate.properties file:
+
+Add the following Code
+
 ```
-//没有用GOOLE厂商的不用加
+// If you don’t use GOOLE manufacturer, you don’t need to add it.
 android.useAndroidX=true
 ```
-具体可参考Examples下  gradleTemplate.properties 文件
+For details, please refer to the gradleTemplate.properties file under Examples
 
-#### 修改LauncherManifest.xml文件：
-在application添加以下内容
+#### Modify the LauncherManifest.xml file：
+
+Add it under the application tag
+
 ```
 android:name="com.engagelab.privates.unity.push.MTPushApplication"
 ```
-具体可参考Examples下  LauncherManifest.xml 文件
 
-#### 配置mt_engagelab_push_config文件：
-添加以下内容
+For details, please refer to the LauncherManifest.xml file under Examples
+
+#### Configure the mt_engagelab_push_config file:
+
+Add the following Code
 ```
 {
-	"tcp_ssl": true,//true为tcp使用ssl加密
-	"debug":true, //debug 模式，true为打印debug日志
-    "testGoogle": true // true可以测试fcm，只试用于测试。在正式环境时请设置为false或删除该项。
+	"tcp_ssl": true, // Fill in the true flag to use ssl encryption for tcp
+	"debug":true,  // debug mode, true means printing debug logs
+    "testGoogle": true // Fill in true to test fcm, it is only used for testing. In a production environment, please set it to false or delete this item.
 }
 ```
-具体可参考Examples下  mt_engagelab_push_config 文件
+For details, please refer to the mt_engagelab_push_config file under Examples.
 
 
 ### iOS
+##  When copying the plugin, directly keep the corresponding debugging package.
+## In the plugin iOS directory, there is the SDK package mtpush-ios-x.x.x.xcframework. There are two folders in the package.
+ - "ios-arm64" is a real machine architecture, used for real machine running, debugging and release. Please keep this folder and delete `ios-arm64_×86_64-simulator` floder when you need to run it on a real machine.
+ - "ios-arm64_×86_64-simulator" is the simulator architecture, used for simulator running and debugging. If you need to run the iOS simulator, please keep this folder and delete the `ios-arm64` folder. (that is, when the project configuration iOS Target SDK is specified as Simulator SDK).
 
-## ！！！ 注意，使用unity生成iOS项目后，如果提示SDK的xcframework包里面缺少 "info.plist"文件，把插件xcframework包中的info.plist文件拷贝到项目中插件xcframework包中。
-
-## 或者，在拷贝插件时，直接保留相应的调试包。
-## 插件iOS目录中，有SDK包 mtpush-ios-x.x.x.xcframework ,包里面有两个文件夹
- - "ios-arm64" 是真机架构，用于真机运行调试以及上架发布。当需要在真机上运行时请保留此文件夹并删除其他。
- - "ios-arm64_×86_64-simulator" 是模拟器架构，用于模拟器运行调试。如果需要运行 iOS 模拟器请保留此文件夹并删除其他（即当工程配置 iOS Target SDK 指定为 Simulator SDK 时）。
-
-1. 生成 iOS 工程，并打开该工程。
-2. 添加必要的框架：
+1. Generate an iOS project and open the project.
+2. Add necessary frameworks:
 
    - CFNetwork.framework
    - CoreFoundation.framework
@@ -173,24 +176,24 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
    - Foundation.framework
    - UIKit.framework
    - Security.framework
-   - libz.tbd（Xcode 7 以下版本是 libz.dylib）
-   - AdSupport.framework（获取 IDFA 需要；如果不使用 IDFA，请不要添加）
-   - UserNotifications.framework（Xcode 8 及以上）
-   - libresolv.tbd（JPush 2.2.0 及以上版本需要，Xcode 7 以下版本是 libresolv.dylib）
+   - libz.tbd（(Xcode 7 and below versions are libz.dylib)
+   - AdSupport.framework (Required to get IDFA; don't add if you don't use IDFA)
+   - UserNotifications.framework (Xcode 8 and above)
+   - libresolv.tbd (Required for JPush 2.2.0 and above, libresolv.dylib for Xcode 7 and below)
    - StoreKit.framework 
    - libsqlite3.tbd 
    
       ​
 
-3. 在 UnityAppController.mm 中添加头文件 `MTPushUnityManager.h`  。
+3. Add the header file `MTPushUnityManager.h` in UnityAppController.mm.
 
     ```Objective-C
    #include <MTPushUnityManager.h>
-   #import <AdSupport/AdSupport.h>// 如需使用广告标识符 IDFA 则添加该头文件，否则不添加。
-   #import <AppTrackingTransparency/AppTrackingTransparency.h>// 如需使用广告标识符 IDFA 则添加该头文件，否则不添加。
+   #import <AdSupport/AdSupport.h>// If you need to use the advertising identifier IDFA, add this header file, otherwise do not add it.
+   #import <AppTrackingTransparency/AppTrackingTransparency.h>// If you need to use the advertising identifier IDFA, add this header file, otherwise do not add it.
     ```
 
-4. 在 UnityAppController.mm 的下列方法中添加以下代码：
+4. Add the following code in the following methods of UnityAppController.mm:
 
     ```Objective-C
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -198,14 +201,13 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
    
    __block NSString *advertisingId = nil;
    //    if (@available(iOS 14, *)) {
-   //        //设置Info.plist中 NSUserTrackingUsageDescription 需要广告追踪权限，用来定位唯一用户标识
+   //        //设置Info.plist中 NSUserTrackingUsageDescription, Requires ad tracking permissions to target unique user identifiers
    //        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
    //            if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
    //                advertisingId = [[ASIdentifierManager sharedManager] advertisingIdentifier].UUIDString;
    //            }
    //        }];
    //    } else {
-   //        // 使用原方式访问 IDFA
    //        advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
    //    }
 
@@ -220,22 +222,17 @@ android:name="com.engagelab.privates.unity.push.MTPushApplication"
     }
     ```
     
-5.有些Unity版本在导出Xcode项目之后，需要修改：
+5.Some Unity versions need to be modified after exporting the Xcode project:
 
 ```Objective-C
-    Preprocessor.h 文件中
+    In Preprocessor.h file,
 
     #define UNITY_USES_REMOTE_NOTIFICATIONS 0
-    更改为
+    change to
     #define UNITY_USES_REMOTE_NOTIFICATIONS 1
-
-    否则
-
-    didRegisterForRemoteNotificationsWithDeviceToken
-
-    都将无法使用
 ```
-## API 说明
+
+## API description
 
 [API](/Doc/CommonAPI.md)。
 

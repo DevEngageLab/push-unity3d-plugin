@@ -1,42 +1,43 @@
-# API 说明
+# API description
 
-## 监听，回调的消息
+## Listening event callback
 
-### onMTReceiver(string messageJson) （android/ios都支持）
+### onMTReceiver(string messageJson) （Both android/ios support）
 
-集成了 sdk 回调的事件
+Listening event callback
+
 ```
 {
-"event_name": "",//事件类型
-"event_data": ""//事件内容
+"event_name": "",//event type
+"event_data": ""//event content
 }
 ```
 
-#### 参数说明
-- messageJson:反回的事件数据
-  - "event_name": 为事件类型
+#### Parameter Description
+- messageJson:Returned event data
+  - "event_name": event type
     - android:
-      - "onNotificationStatus":应用通知开关状态回调,内容类型为boolean，true为打开，false为关闭
-      - "onConnectStatus":长连接状态回调,内容类型为boolean，true为连接
-      - "onNotificationArrived":通知消息到达回调，内容为通知消息体
-      - "onNotificationClicked":通知消息点击回调，内容为通知消息体
-      - "onNotificationDeleted":通知消息删除回调，内容为通知消息体
-      - "onCustomMessage":自定义消息回调，内容为通知消息体
-      - "onPlatformToken":厂商token消息回调，内容为厂商token消息体
-      - "OnTagOperateResult":标签操作消息回调
-      - "OnAliasOperateResult":别名操作消息回调
+      - "onNotificationStatus":Application notification switch status callback, the content type is boolean, true means open, false means closed
+      - "onConnectStatus":tcp connection status callback, content type is boolean, true means connected.
+      - "onNotificationArrived":Notification arrival event callback, the content is the notification message body
+      - "onNotificationClicked":Notification click event callback, the content is the notification message body
+      - "onNotificationDeleted":Notification deletion event callback, the content is the notification message body
+      - "onCustomMessage":Custom message callback, the content is the message body of the custom message
+      - "onPlatformToken":Manufacturer token message callback, the content is the manufacturer token message body
+      - "OnTagOperateResult":Callback for TagOperate
+      - "OnAliasOperateResult":Callback for AliasOperate
     - ios:
-      - "willPresentNotification":通知消息到达回调，内容为通知消息体
-      - "didReceiveNotificationResponse":通知消息点击回调，内容为通知消息体
-      - "networkDidReceiveMessage":自定义消息回调，内容为通知消息体
-      - "networkDidLogin":登陆成功
-      - "OnTagOperateResult":标签操作消息回调
-      - "OnAliasOperateResult":别名操作消息回调
-      - "OnNotificationAuthorizationResult":通知的状态
-  - "event_data": 为对应内容
+      - "willPresentNotification":Notification arrival event callback, the content is the notification message body
+      - "didReceiveNotificationResponse":Notification click event callback, the content is the notification message body
+      - "networkDidReceiveMessage":Custom message callback, the content is the message body of the custom message
+      - "networkDidLogin":login successful
+      - "OnTagOperateResult":Callback for TagOperate
+      - "OnAliasOperateResult":Callback for AliasOperate
+      - "OnNotificationAuthorizationResult":Status callback for notification permissions
+  - "event_data": content
 
 
-#### 代码示例
+#### Example
 
 ```js
 void onMTReceiver(string jsonStr)
@@ -46,14 +47,14 @@ void onMTReceiver(string jsonStr)
 }
 ```
 
-## 初始化
+## Setup
 
 ### initAndroid （android）
 ### initIos （ios）
 
-初始化sdk
+Initialize sdk
 
-#### 接口定义
+#### Interface definition
 
 ```js
 #if UNITY_ANDROID
@@ -67,180 +68,180 @@ MTPushBinding.InitMTPushIos(gameObject.name,"您的appkey",false,"demo",false);
 
 ### setSiteName
 
-设置数据中心的名字，安卓也需要在launcherTemplate.gradle中manifestplaceholder 中设置
-//数据中心名称，填空""时，默认"Singapore"数据中心
+Set the name of the data center. Android also needs to be set in manifestplaceholder in launcherTemplate.gradle.
+//Data center name, when filling in the blank "", the default is "Singapore" data center
 ENGAGELAB_PRIVATES_SITE_NAME: "xxx",
 
-#### 接口定义
+#### Interface definition
 
 ```js
 MTPushBinding.setSiteName('xxx')
 ```
 
-#### 返回值
+#### return value
 
-无
+none
 
-#### 代码示例
+#### code example
 
 ```js
 MTPushBinding.setSiteName('xxx');
 ```
 
-## 开启 Debug 模式
+## Turn on Debug mode
 
-### configDebugMode （android/ios都支持）
+### configDebugMode （Both android/ios support）
 
-设置是否debug模式，debug模式会打印更对详细日志
+Set whether to debug mode. Debug mode will print detailed logs.
 
-#### 接口定义
+#### Interface definition
 
 ```js
 MTPushBinding.ConfigDebugMode(enable)
 ```
 
-#### 参数说明
+#### Parameter Description
 
-- enable: 是否调试模式，true为调试模式，false不是
+- enable: Whether to debug mode, true means debugging mode, false does not
 
-#### 代码示例
+#### code example
 
 ```js
-MTPushBinding.ConfigDebugMode(true);//发布前要删除掉
+MTPushBinding.ConfigDebugMode(true);//Delete before publishing
 ```
 
-## 获取 RegistrationID （android/ios都支持）
+## Get RegistrationID （Both android/ios support）
 
 ### getRegistrationId
 
-RegistrationID 定义:
-获取当前设备的registrationId，Engagelab私有云唯一标识，可同于推送
+RegistrationID :
+Get the registrationId of the current device, which can be pushed through the registrationId
 
-#### 接口定义
+#### Interface definition
 
 ```js
 MTPushBinding.GetRegistrationId()
 ```
 
-#### 返回值
+#### return value
 
-调用此 API 来取得应用程序对应的 RegistrationID。 只有当应用程序成功注册到 JPush 的服务器时才返回对应的值，否则返回空字符串。
+Call this API to get the RegistrationID. Only when the registration is successful, the EngageLab server returns the corresponding value, otherwise it returns an empty string.
 
-#### 代码示例
+#### code example
 
 ```js
 string registrationId = MTPushBinding.GetRegistrationId();
 ```
 
 
-## 标签与别名
+## Tags and aliases
 
 ### SetTags(int sequence, List<string> tags)
 
-给当前设备设置标签。
+Set a label for the current device
 
-注意该操作是覆盖逻辑，即每次调用会覆盖之前已经设置的标签。
+Note that this operation is an overwriting operation, that is, each call will overwrite the label that has been set before.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
-- tags: 标签列表。
-  - 有效的标签组成：字母（区分大小写）、数字、下划线、汉字、特殊字符（@!#$&*+=.|）。
-  - 限制：每个 tag 命名长度限制为 40 字节，单个设备最多支持设置 1000 个 tag，且单次操作总长度不得超过 5000 字节（判断长度需采用 UTF-8 编码）。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
+- tags: tag list.
+  - Valid tags consist of: letters (case-sensitive), numbers, underscores, Chinese characters, special characters (@!#$&*+=.|).
+  - Restrictions: The length of each tag is limited to 40 bytes. A single device supports setting up to 1,000 tags, and the total length of a single operation must not exceed 5,000 bytes (UTF-8 encoding is required to determine the length).
 
 ### AddTags(int sequence, List<string> tags)
 
-给当前设备在已有的基础上新增标签。
+Add a new label to the current device based on the existing one.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
-- tags: 标签列表。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
+- tags: tag list。
 
 ### DeleteTags(int sequence, List<string> tags)
 
-删除标签。
+DeleteTags。
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
-- tags: 标签列表。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
+- tags: tag list。
 
 ### CleanTags(int sequence)
 
-清空标签。
+CleanTags。
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
 
 ### GetAllTags(int sequence)
 
-获取当前设备的所有标签。
+Get all tags of the current device.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
 
 ### CheckTagBindState(int sequence, string tag)
 
-检查指定标签是否已经绑定。
+Check whether the specified tag has been bound.
 
-`OnTagOperateResult` 回调中会附带 `isBind` 属性。
+The `OnTagOperateResult` callback will be accompanied by the `isBind` attribute.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnTagOperateResult` 回调中一并返回。
-- tag: 待查询的标签。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnTagOperateResult` callback.
+- tag: The label to be queried.
 
 ### SetAlias(int sequence, string alias)
 
-设置别名，每个设备只会有一个别名。
+Set an alias. Each device will have only one alias.
 
-注意：该接口是覆盖逻辑，即新的调用会覆盖之前的设置。
+Note: This interface is an overwrite operation, that is, new calls will overwrite previous settings.
 
-#### 参数说明
 
-- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
-- alias: 要设置的别名。
-  - 有效的别名组成：字母（区分大小写）、数字、下划线、汉字、特殊字符（@!#$&*+=.|）。
-  - 限制：alias 命名长度限制为 40 字节（判断长度需采用 UTF-8 编码）。
+#### Parameter Description
 
+- sequence: As the unique identifier of an operation, it will be returned in the `OnAliasOperateResult` callback.
+- alias: Alias ​​to set。
+  - Valid aliases consist of: letters (case-sensitive), numbers, underscores, Chinese characters, special characters (@!#$&*+=.|).
+  - Restrictions: The alias name length is limited to 40 bytes (UTF-8 encoding is required to determine the length).
+  
 ### DeleteAlias(int sequence)
 
-删除当前设备设置的别名。
+Delete the alias currently set on the device.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnAliasOperateResult` callback.
 
 ### GetAlias(int sequence)
 
-获取当前设备设置的别名。
+Get the alias for the current device settings.
 
-#### 参数说明
+#### Parameter Description
 
-- sequence: 作为一次操作的唯一标识，会在 `OnAliasOperateResult` 回调中一并返回。
+- sequence: As the unique identifier of an operation, it will be returned in the `OnAliasOperateResult` callback.
 
 
 ### FilterValidTags(List<string> tags)  // only ios
 
-过滤非法tag
+Filter illegal tags
 
-#### 参数说明
+#### Parameter Description
 
-- tags: tag列表
+- tags: tag list
 
 
 
-## 打开通知设置界面 
+## Open the notification settings interface
 
 ### GoToAppNotificationSettingsAndroid （android）
 ### OpenSettingsForNotificationIOS （ios）
 
-初始化sdk
 
-#### 接口定义
+#### Interface definition
 
 ```js
 #if UNITY_ANDROID
