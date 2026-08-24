@@ -45,16 +45,16 @@ apply plugin: 'com.huawei.agconnect'
     //Required 
     implementation 'com.engagelab:engagelab:5.4.3'
     //Optional，google manufacturer
-    implementation 'com.engagelab.plugin:google:5.4.2'
+    implementation 'com.engagelab.plugin:google:5.4.3'
     //Optional，honor manufacturer
-    implementation 'com.engagelab.plugin:honor:5.4.2'
-    implementation 'com.engagelab.plugin:honor_th_push:5.4.2'
+    implementation 'com.engagelab.plugin:honor:5.4.3'
+    implementation 'com.engagelab.plugin:honor_th_push:5.4.3'
     //Optional，huawei manufacturer
-    implementation 'com.engagelab.plugin:huawei:5.4.2'
+    implementation 'com.engagelab.plugin:huawei:5.4.3'
     //Optional，mi manufacturer
-    implementation 'com.engagelab.plugin:mi:5.4.2'
+    implementation 'com.engagelab.plugin:mi:5.4.3'
     //Optional，meizu manufacturer
-    implementation 'com.engagelab.plugin:meizu:5.4.2'
+    implementation 'com.engagelab.plugin:meizu:5.4.3'
     //Optional，oppo manufacturer
     implementation 'com.engagelab.plugin:oppo:5.4.3'
     implementation 'com.engagelab.plugin:oppo_th_push:5.4.3'
