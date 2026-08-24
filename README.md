@@ -43,23 +43,23 @@ apply plugin: 'com.huawei.agconnect'
 ```
     
     //Required 
-    implementation 'com.engagelab:engagelab:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab:engagelab:5.4.3'
     //Optional，google manufacturer
-    implementation 'com.engagelab.plugin:google:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:google:5.4.3'
     //Optional，honor manufacturer
-    implementation 'com.engagelab.plugin:honor:4.4.0' // Here we take version 4.4.0 as an example.
-    implementation 'com.engagelab.plugin:honor_th_push:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:honor:5.4.3'
+    implementation 'com.engagelab.plugin:honor_th_push:5.4.3'
     //Optional，huawei manufacturer
-    implementation 'com.engagelab.plugin:huawei:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:huawei:5.4.3'
     //Optional，mi manufacturer
-    implementation 'com.engagelab.plugin:mi_global:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:mi:5.4.3'
     //Optional，meizu manufacturer
-    implementation 'com.engagelab.plugin:meizu:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:meizu:5.4.3'
     //Optional，oppo manufacturer
-    implementation 'com.engagelab.plugin:oppo:4.4.0' // Here we take version 4.4.0 as an example.
-    implementation 'com.engagelab.plugin:oppo_th_push:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:oppo:5.4.3'
+    implementation 'com.engagelab.plugin:oppo_th_push:5.4.3'
     //Optional，vivo manufacturer
-    implementation 'com.engagelab.plugin:vivo:4.4.0' // Here we take version 4.4.0 as an example.
+    implementation 'com.engagelab.plugin:vivo:5.4.3'
 
     // google push need, if you don’t need google channel, delete it
     implementation 'com.google.firebase:firebase-messaging:23.2.0'
@@ -235,4 +235,3 @@ For details, please refer to the mt_engagelab_push_config file under Examples.
 ## API description
 
 [API](/Doc/CommonAPI.md)。
-
