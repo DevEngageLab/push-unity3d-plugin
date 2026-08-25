@@ -69,7 +69,7 @@ dependencies {
     compileOnly 'com.engagelab.plugin:oppo:5.4.3'
     compileOnly 'com.engagelab.plugin:oppo_th_push:5.4.3'
     //可选，vivo厂商
-    compileOnly 'com.engagelab.plugin:vivo:5.4.3'
+    compileOnly 'com.engagelab.plugin:vivo:5.4.3.1'
 
     // google push need，不需要 google 通道，则删除
     compileOnly 'com.google.firebase:firebase-messaging:23.2.0'

@@ -59,7 +59,7 @@ apply plugin: 'com.huawei.agconnect'
     implementation 'com.engagelab.plugin:oppo:5.4.3'
     implementation 'com.engagelab.plugin:oppo_th_push:5.4.3'
     //Optional，vivo manufacturer
-    implementation 'com.engagelab.plugin:vivo:5.4.3'
+    implementation 'com.engagelab.plugin:vivo:5.4.3.1'
 
     // google push need, if you don’t need google channel, delete it
     implementation 'com.google.firebase:firebase-messaging:23.2.0'
